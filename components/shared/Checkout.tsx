@@ -73,7 +73,7 @@ const Checkout = ({
   // }
   console.log(flutter_key);
   const config: FlutterwaveConfig = {
-    public_key: flutter_key,
+    public_key: "FLWPUBK_TEST-bc83a76f386cc698b775615993c2c9b2-X",
     tx_ref: Date.now().toString(),
     amount: parseFloat(event.price),
     currency: "UGX",
