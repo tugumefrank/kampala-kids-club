@@ -63,14 +63,7 @@ const Checkout = ({
     customer: Customer;
     customizations: Customizations;
   };
-  // if (!flutter_key) {
-  //   return (
-  //     <div>
-  //       <p>Error: Flutterwave public key is not defined.</p>
-  //       {/* Optionally, provide instructions for setting the key */}
-  //     </div>
-  //   );
-  // }
+
   console.log(flutter_key);
   const config: FlutterwaveConfig = {
     public_key: "FLWPUBK_TEST-bc83a76f386cc698b775615993c2c9b2-X",
