@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { IEvent } from "@/lib/database/models/event.model";
 import { Button } from "../ui/button";
 import { checkoutOrder } from "@/lib/actions/order.actions";
-import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
+
 import {
   Dialog,
   DialogContent,
@@ -34,6 +34,7 @@ import {
 import Dropdown from "./Dropdown";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 const Checkout = ({
   event,
   userId,
@@ -45,6 +46,9 @@ const Checkout = ({
   email: string;
   userImage: string;
 }) => {
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [mobileNetwork, setMobileNetwork] = useState("");
+  const [status, setStatus] = useState("");
   useEffect(() => {
     // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
@@ -66,71 +70,37 @@ const Checkout = ({
       price: event.price,
       isFree: event.isFree,
       buyerId: userId,
+      mobileNumber,
+      mobileNetwork,
+      email,
     };
+    try {
+      const response = await checkoutOrder(order);
+      console.log(response);
 
-    await checkoutOrder(order);
-  };
-  type Customer = {
-    email: string;
-    phone_number: string;
-    name: string;
-  };
-
-  type Customizations = {
-    title: string;
-    description: string;
-    logo: string;
-  };
-
-  type FlutterwaveConfig = {
-    public_key: string;
-    tx_ref: string;
-    amount: number;
-    currency: string;
-    payment_options: string;
-    customer: Customer;
-    customizations: Customizations;
-  };
-
-  const config: FlutterwaveConfig = {
-    public_key: "FLWPUBK_TEST-bc83a76f386cc698b775615993c2c9b2-X",
-    tx_ref: Date.now().toString(),
-    amount: parseFloat(event.price),
-    currency: "UGX",
-    payment_options: "card,mobilemoneyuganda",
-    customer: {
-      email: email,
-      phone_number: "070********",
-      name: "john doe",
-    },
-    customizations: {
-      title: event.title,
-      description: event.description,
-      logo: userImage,
-    },
+      // Check if the response has a redirect URL
+      if (
+        response &&
+        response.flutterwaveResponse &&
+        response.flutterwaveResponse.meta &&
+        response.flutterwaveResponse.meta.authorization &&
+        response.flutterwaveResponse.meta.authorization.redirect
+      ) {
+        // Redirect to the specified URL
+        window.location.href =
+          response.flutterwaveResponse.meta.authorization.redirect;
+      } else if ((response.message = "internal server error")) {
+        setStatus("backend service unvailable");
+        console.log(status);
+      } else {
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      // Handle the error as needed
+    }
   };
 
-  const handleFlutterPayment = useFlutterwave(config);
   return (
-    // <form action={onCheckout} method="post">
-    // <Button
-    //   onClick={() => {
-    //     handleFlutterPayment({
-    //       callback: (response) => {
-    //         console.log(response);
-    //         closePaymentModal(); // this will close the modal programmatically
-    //       },
-    //       onClose: () => {},
-    //     });
-    //   }}
-    //   type="submit"
-    //   role="link"
-    //   size="lg"
-    //   className="button sm:w-fit"
-    // >
-    //   {event.isFree ? "Get Ticket" : "Buy Ticket"}
-    // </Button>
-    // </form>
     <Dialog>
       <DialogTrigger asChild>
         <Button className="button sm:w-fit">
@@ -152,10 +122,12 @@ const Checkout = ({
               id="name"
               placeholder="Enter Mobile Number"
               className="input-field  w-full"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
             />{" "}
           </div>
           <div className="flex flex-col gap-5 md:flex-row">
-            <Select>
+            <Select value={mobileNetwork} onValueChange={setMobileNetwork}>
               <SelectTrigger className="w-full input-field">
                 <SelectValue placeholder="Choose mobile network " />
               </SelectTrigger>
@@ -171,7 +143,11 @@ const Checkout = ({
         </div>
 
         <DialogFooter>
-          <Button type="submit" className="button sm:w-fit">
+          <Button
+            type="submit"
+            className="button sm:w-fit"
+            onClick={onCheckout}
+          >
             Pay Now
           </Button>
         </DialogFooter>
