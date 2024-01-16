@@ -18,16 +18,13 @@ import User from "../database/models/user.model";
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   try {
-    const res = await fetch(
-      `${process.env.NODE_PUBLIC_SERVER_URL_LOCALHOST}users/test`,
-      {
-        cache: "no-store",
+    const res = await fetch(`${process.env.NODE_PUBLIC_SERVER_URL}users/test`, {
+      cache: "no-store",
 
-        method: "POST",
-        body: JSON.stringify(order),
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+      method: "POST",
+      body: JSON.stringify(order),
+      headers: { "Content-Type": "application/json" },
+    });
     const data = await res.json();
     console.log(data);
     return data;
