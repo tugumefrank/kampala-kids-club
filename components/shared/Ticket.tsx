@@ -1,6 +1,8 @@
-import { IEvent } from "@/lib/database/models/event.model";
 import React from "react";
-import Card from "./Card";
+import Image from "next/image";
+import { IEvent } from "@/lib/database/models/event.model";
+import TicketBarcode from "./TicketBarcode";
+import TicketHeroSection from "./TicketHeroSection";
 import Pagination from "./Pagination";
 
 type CollectionProps = {
@@ -13,8 +15,7 @@ type CollectionProps = {
   urlParamName?: string;
   collectionType?: "Events_Organized" | "My_Tickets" | "All_Events";
 };
-
-const Collection = ({
+const Ticket = ({
   data,
   emptyTitle,
   emptyStateSubtext,
@@ -23,21 +24,33 @@ const Collection = ({
   collectionType,
   urlParamName,
 }: CollectionProps) => {
+  console.log(data);
   return (
+    // <div className="px-4 py-2 text-gray-800">
+    //   <div className=" relative flex flex-col-reverse md:flex-row justify-between shadow-md border rounded-md bg-white">
+    //     <TicketBarcode />
+    //     <TicketHeroSection />
+    //   </div>
+    // </div>
+
     <>
       {data.length > 0 ? (
         <div className="flex flex-col items-center gap-10">
-          <ul className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:gap-10">
+          <ul className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2 xl:gap-10 ">
             {data.map((event) => {
-              const hasOrderLink = collectionType === "Events_Organized";
-              const hidePrice = collectionType === "My_Tickets";
+              //   const hasOrderLink = collectionType === "Events_Organized";
+              //   const hidePrice = collectionType === "My_Tickets";
 
               return (
-                <li key={event._id} className="flex justify-center">
-                  <Card
+                <li
+                  key={event._id}
+                  className="flex justify-center border-2 border-dashed rounded"
+                >
+                  <TicketBarcode />
+                  <TicketHeroSection
                     event={event}
-                    hasOrderLink={hasOrderLink}
-                    hidePrice={hidePrice}
+                    // hasOrderLink={hasOrderLink}
+                    // hidePrice={hidePrice}
                   />
                 </li>
               );
@@ -62,4 +75,4 @@ const Collection = ({
   );
 };
 
-export default Collection;
+export default Ticket;
