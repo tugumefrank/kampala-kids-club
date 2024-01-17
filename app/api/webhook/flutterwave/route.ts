@@ -64,16 +64,16 @@ export async function POST(request: Request, response: Response) {
     return NextResponse.json({ message: "Webhook error", error: err });
   }
 
-  const eventStatus = eventData.status;
-
+  const eventStatus = eventData.data.status;
+  console.log(eventStatus);
   // Check if the event is successful
   if (eventStatus === "successful") {
-    const { id, amount, txRef } = eventData;
-
+    const { id, amount, tx_ref } = eventData.data;
+    console.log(tx_ref);
     // Make a GET request to Flutterwave API
     // const txRef = metadata?.txRef || ""; // Replace with the actual key you expect in metadata
     const transactionData = await fetch(
-      `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${txRef}`,
+      `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${tx_ref}`,
       {
         method: "GET",
         headers: {
@@ -87,12 +87,13 @@ export async function POST(request: Request, response: Response) {
 
     if (transactionData.ok) {
       const transactionDetails = await transactionData.json();
+      console.log(transactionDetails);
       const { eventId } = transactionDetails.data.meta;
       // Your existing code to create an order
       const order = {
-        stripeId: id,
+        stripeId: transactionDetails.data.flw_ref,
         eventId: eventId,
-        buyerId: transactionDetails.data?.id || "",
+        buyerId: transactionDetails.data.meta.buyerId,
         totalAmount: amount ? (amount / 100).toString() : "0",
         createdAt: new Date(),
       };
@@ -109,5 +110,5 @@ export async function POST(request: Request, response: Response) {
     }
   }
 
-  return new Response("", { status: 200 });
+  return new Response("wel", { status: 200 });
 }
