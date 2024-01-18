@@ -46,7 +46,7 @@ const Ticket = ({
                   key={event._id}
                   className="flex justify-center border-2 border-dashed rounded"
                 >
-                  <TicketBarcode />
+                  <TicketBarcode data={data} />
                   <TicketHeroSection
                     event={event}
                     // hasOrderLink={hasOrderLink}
