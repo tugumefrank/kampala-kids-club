@@ -32,6 +32,8 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
   console.log(FormSubmitstatus);
   const shouldRenderForm = Object.keys(FormErrorStatus).length === 0;
   console.log(shouldRenderForm);
+  const [dynamicClassNames, setDynamicClassNames] = useState("");
+  const [click, setClick] = useState(false);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -40,7 +42,20 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
         </Button>
       </DialogTrigger>
       {shouldRenderForm ? (
-        <DialogContent className=" sm:max-w-[100]  bg-slate-200">
+        <DialogContent
+          className={`sm:max-w-[100] bg-slate-200 ${dynamicClassNames}`}
+          onInteractOutside={(e) => {
+            e.preventDefault();
+            e.preventDefault();
+            if (!click) {
+              setDynamicClassNames("animate-pulse border-red-500");
+
+              setTimeout(() => {
+                setDynamicClassNames(""); // Reset the class after 1 second
+              }, 100);
+            }
+          }}
+        >
           <DialogHeader>
             <DialogTitle className=" text-center">
               Pay for {childName}
