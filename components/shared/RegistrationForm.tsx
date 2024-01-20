@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import PaymentSucess from "@/components/shared/PaymentSucess";
 import {
   Form,
   FormControl,
@@ -13,9 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { eventFormSchema } from "@/lib/validator";
+import { childFormSchema } from "@/lib/validator";
 import * as z from "zod";
-import { eventDefaultValues } from "@/constants";
+import { childFormSchemaDefaultValues } from "@/constants";
 import Dropdown from "./Dropdown";
 import { Textarea } from "@/components/ui/textarea";
 import { FileUploader } from "./FileUploader";
@@ -29,6 +30,7 @@ import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
 import { createEvent, updateEvent } from "@/lib/actions/event.actions";
 import { IEvent } from "@/lib/database/models/event.model";
+import toast, { Toaster } from "react-hot-toast";
 
 type EventFormProps = {
   // Your prop types here
@@ -36,13 +38,21 @@ type EventFormProps = {
 
 const EventForm: React.FC<EventFormProps> = () => {
   const [files, setFiles] = useState<File[]>([]);
-  const form = useForm<z.infer<typeof eventFormSchema>>({
-    resolver: zodResolver(eventFormSchema),
-    defaultValues: {}, // Add your default values here
+  const form = useForm<z.infer<typeof childFormSchema>>({
+    resolver: zodResolver(childFormSchema),
+    defaultValues: childFormSchemaDefaultValues,
   });
-
-  const onSubmit = async (values: z.infer<typeof eventFormSchema>) => {
-    // Your submission logic here
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<z.infer<typeof childFormSchema>>({
+    defaultValues: childFormSchemaDefaultValues,
+    resolver: zodResolver(childFormSchema),
+  });
+  const onSubmit = async (values: z.infer<typeof childFormSchema>) => {
+    toast(<PaymentSucess />);
   };
 
   return (
@@ -52,45 +62,50 @@ const EventForm: React.FC<EventFormProps> = () => {
         className="flex flex-col gap-5 bg-slate-200 rounded-2xl p-5"
       >
         <label className="p-semibold-18 text-center">
-          Fill Out The Enter Form
+          Fill Out The Entry Form
         </label>
+        {JSON.stringify(form.formState.errors, null, 2)}
+        {/* Personal Information */}
         <div className="flex flex-col gap-5 md:flex-row">
-          {/* Your form fields go here */}
-
           <FormField
             control={form.control}
-            name="title"
+            name="childName"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
-                  placeholder="Name(must be a girl 3-12 yrs)"
+                  placeholder="Name(girl 3-12 yrs)"
                   {...field}
                   className="input-field-register"
                 />
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
-
+          {/* 
           <FormField
             control={form.control}
-            name="title"
+            name="childAge"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
                   placeholder="Age"
                   {...field}
                   className="input-field-register"
+                  {...(register("childAge"),
+                  {
+                    valueAsNumber: true,
+                  })}
                 />
+                <FormMessage>
+                  {form.formState.errors.childAge?.message}
+                </FormMessage>
               </FormItem>
             )}
-          />
-          {/* Repeat similar structure for other form fields */}
-        </div>
-        <div className="flex flex-col gap-5 md:flex-row">
+          /> */}
+
+          {/* School and Class Information */}
           <FormField
             control={form.control}
-            name="title"
+            name="school"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
@@ -101,11 +116,10 @@ const EventForm: React.FC<EventFormProps> = () => {
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
 
           <FormField
             control={form.control}
-            name="title"
+            name="class"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
@@ -116,12 +130,13 @@ const EventForm: React.FC<EventFormProps> = () => {
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
         </div>
+
+        {/* Address Information */}
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
             control={form.control}
-            name="title"
+            name="nationality"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
@@ -132,31 +147,28 @@ const EventForm: React.FC<EventFormProps> = () => {
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
 
           <FormField
             control={form.control}
-            name="title"
+            name="residentialAddress"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
-                  placeholder="Residential Address
-"
+                  placeholder="Residential Address"
                   {...field}
                   className="input-field-register"
                 />
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
         </div>
-        {/* Description Section */}
-        {/* File Upload Section */}
-        <div className="flex flex-col gap-5 ">
-          <label className="p-semibold-18 ">Upload Child's current photo</label>
+
+        {/* Upload Child's Photo */}
+        <div className="flex flex-col gap-5">
+          <label className="p-semibold-18">Upload Child's Current Photo</label>
           <FormField
             control={form.control}
-            name="imageUrl"
+            name="childPhotoUrl"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl className="h-72">
@@ -170,99 +182,91 @@ const EventForm: React.FC<EventFormProps> = () => {
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
         </div>
+
+        {/* Parent/Guardian Information */}
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
             control={form.control}
-            name="title"
+            name="parentGuardianName"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
-                  placeholder="Parent/Guardian Name
-
-"
+                  placeholder="Parent/Guardian Name"
                   {...field}
                   className="input-field-register"
                 />
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
 
           <FormField
             control={form.control}
-            name="title"
+            name="parentGuardianContact"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
-                  placeholder="Parent/Guardian Contact
-"
+                  placeholder="Parent/Guardian Contact"
                   {...field}
                   className="input-field-register"
                 />
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
-        </div>{" "}
-        <div className="flex flex-col gap-5 md:flex-row">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <Input
-                  placeholder="Whatsapp number
-"
-                  {...field}
-                  className="input-field-register"
-                />
-              </FormItem>
-            )}
-          />
-          {/* Repeat similar structure for other form fields */}
-
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <Input
-                  placeholder="Place of work
-"
-                  {...field}
-                  className="input-field-register"
-                />
-              </FormItem>
-            )}
-          />
-          {/* Repeat similar structure for other form fields */}
-        </div>{" "}
-        <div className="flex flex-col gap-5 md:flex-row">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <Input
-                  placeholder="Relationship with the applicant
-"
-                  {...field}
-                  className="input-field-register"
-                />
-              </FormItem>
-            )}
-          />
-          {/* Repeat similar structure for other form fields */}
         </div>
-        <div className="flex flex-col gap-5 ">
-          <label className="p-semibold-18 ">
-            Upload Parents ID or Passport
-          </label>
+
+        <div className="flex flex-col gap-5 md:flex-row">
           <FormField
             control={form.control}
-            name="imageUrl"
+            name="whatsappNumber"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <Input
+                  placeholder="Whatsapp number"
+                  {...field}
+                  className="input-field-register"
+                />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="placeOfWork"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <Input
+                  placeholder="Place of work"
+                  {...field}
+                  className="input-field-register"
+                />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="flex flex-col gap-5 md:flex-row">
+          <FormField
+            control={form.control}
+            name="relationshipWithApplicant"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <Input
+                  placeholder="Relationship with the applicant"
+                  {...field}
+                  className="input-field-register"
+                />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Upload Parents ID or Passport */}
+        <div className="flex flex-col gap-5">
+          <label className="p-semibold-18">Upload Parents ID or Passport</label>
+          <FormField
+            control={form.control}
+            name="parentIDUrl"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl className="h-72">
@@ -276,46 +280,45 @@ const EventForm: React.FC<EventFormProps> = () => {
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
         </div>
-        {/* Description Section */}
+
+        {/* Healthy Status */}
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
             control={form.control}
-            name="description"
+            name="healthyStatus"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Textarea
-                  placeholder="Healthy status(Specify if any)"
+                  placeholder="Healthy status (Specify if any)"
                   {...field}
                   className="textarea rounded-2xl"
                 />
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
         </div>
+
+        {/* Next of kin's contact */}
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
             control={form.control}
-            name="title"
+            name="nextOfKinContact"
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
-                  placeholder="Next of kin's contact
-
-"
+                  placeholder="Next of kin's contact"
                   {...field}
                   className="input-field-register"
                 />
               </FormItem>
             )}
           />
-          {/* Repeat similar structure for other form fields */}
         </div>
+
         {/* Terms & Conditions Checkbox */}
         <div className="wrapperform flex flex-col gap-5 md:flex-row">
-          <FormField
+          {/* <FormField
             control={form.control}
             name="termsAndConditions"
             render={({ field }) => (
@@ -326,17 +329,15 @@ const EventForm: React.FC<EventFormProps> = () => {
                       checked={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
-                      disabled={field.disabled}
                       name={field.name}
-                      ref={field.ref}
                       className="mr-2 h-5 w-5 border-2 border-primary-500"
                     />
-                    <span className=" pr-3 leading-none">
-                      Disclaimer, terms and conditions apply * Little Miss
-                      Wildlife -Auditions & all activities are always
-                      photographed and videotaped, By allowing your child to
-                      attend these activities, and by attending our events, you
-                      give Little Miss Wildlife - Uganda permission to take
+                    <span className="pr-3 leading-none">
+                     
+                      Little Miss Wildlife -Auditions & all activities are
+                      always photographed and videotaped, By allowing your child
+                      to attend these activities, and by attending our events,
+                      you give Little Miss Wildlife - Uganda permission to take
                       photographs of you and your child or photographs in which
                       you may be involved with others for the purpose of
                       promoting the show or it's partners. You release Little
@@ -360,13 +361,14 @@ const EventForm: React.FC<EventFormProps> = () => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
-        {/* Terms & Conditions Checkbox */}
+
+        {/* Payment Information */}
         <div className="wrapperform flex flex-col gap-5 md:flex-row">
-          <FormField
+          {/* <FormField
             control={form.control}
-            name="termsAndConditions"
+            name="paymentAgreement"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
@@ -375,12 +377,10 @@ const EventForm: React.FC<EventFormProps> = () => {
                       checked={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
-                      disabled={field.disabled}
                       name={field.name}
-                      ref={field.ref}
                       className="mr-2 h-5 w-5 border-2 border-primary-500"
                     />
-                    <span className=" pr-3 leading-none">
+                    <span className="pr-3 leading-none">
                       I understand that I have to pay a non-refundable
                       registration fee of 50,000 UGX on completing my
                       registration form.
@@ -390,9 +390,10 @@ const EventForm: React.FC<EventFormProps> = () => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
-        {/* Your submit button goes here */}
+
+        {/* Submit Button */}
         <Button
           type="submit"
           size="lg"
