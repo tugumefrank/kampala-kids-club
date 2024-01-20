@@ -32,11 +32,11 @@ import { createEvent, updateEvent } from "@/lib/actions/event.actions";
 import { IEvent } from "@/lib/database/models/event.model";
 import toast, { Toaster } from "react-hot-toast";
 
-type EventFormProps = {
+type ChildFormProps = {
   // Your prop types here
 };
 
-const EventForm: React.FC<EventFormProps> = () => {
+const ChildForm: React.FC<ChildFormProps> = () => {
   const [files, setFiles] = useState<File[]>([]);
   const form = useForm<z.infer<typeof childFormSchema>>({
     resolver: zodResolver(childFormSchema),
@@ -407,4 +407,4 @@ const EventForm: React.FC<EventFormProps> = () => {
   );
 };
 
-export default EventForm;
+export default ChildForm;
