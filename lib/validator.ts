@@ -21,10 +21,14 @@ export const eventFormSchema = z.object({
 
 export const childFormSchema = z.object({
   childName: z.string().min(3, "Child's Name must be at least 3 characters"),
-  // childAge: z.number(),
+  childAge: z
+    .string()
+    .refine((value) => /^(0[1-9]|1[0-2]|[3-9])$/.test(value), {
+      message: "Child must be between 3-12yrs",
+    }),
   school: z.string().min(3, "School must be at least 3 characters"),
-  class: z.string().min(1, "Class must be at least 1 character"),
-  nationality: z.string().min(3, "Nationality must be at least 3 characters"),
+  class: z.string().min(2, "Class must be at least 2 character"),
+  nationality: z.string().min(2, "Nationality must be at least 2 characters"),
   residentialAddress: z
     .string()
     .min(3, "Residential Address must be at least 3 characters"),
@@ -37,7 +41,7 @@ export const childFormSchema = z.object({
     .min(7, "Parent/Guardian Contact must be at least 7 characters"),
   whatsappNumber: z
     .string()
-    .min(10, "Whatsapp number must be at least 7 characters"),
+    .min(10, "Whatsapp number must be at least 10 characters"),
   placeOfWork: z.string().min(3, "Place of work must be at least 3 characters"),
   relationshipWithApplicant: z
     .string()

@@ -25,34 +25,40 @@ import Image from "next/image";
 import DatePicker from "react-datepicker";
 import { useUploadThing } from "@/lib/uploadthing";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
 import { createEvent, updateEvent } from "@/lib/actions/event.actions";
 import { IEvent } from "@/lib/database/models/event.model";
 import toast, { Toaster } from "react-hot-toast";
+import PaymentForm from "@/components/shared/PaymentForm";
 
 type ChildFormProps = {
   // Your prop types here
 };
-
+let globalChildName: string | undefined;
 const ChildForm: React.FC<ChildFormProps> = () => {
   const [files, setFiles] = useState<File[]>([]);
   const form = useForm<z.infer<typeof childFormSchema>>({
     resolver: zodResolver(childFormSchema),
     defaultValues: childFormSchemaDefaultValues,
   });
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof childFormSchema>>({
-    defaultValues: childFormSchemaDefaultValues,
-    resolver: zodResolver(childFormSchema),
-  });
+
   const onSubmit = async (values: z.infer<typeof childFormSchema>) => {
-    toast(<PaymentSucess />);
+    // toast(<PaymentSucess />);
+    const childname = values.childName;
+    globalChildName = childname;
+    console.log(childname);
   };
 
   return (
@@ -64,7 +70,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
         <label className="p-semibold-18 text-center">
           Fill Out The Entry Form
         </label>
-        {JSON.stringify(form.formState.errors, null, 2)}
+        {/* {JSON.stringify(form.formState.errors, null, 2)} */}
         {/* Personal Information */}
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
@@ -73,35 +79,36 @@ const ChildForm: React.FC<ChildFormProps> = () => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <Input
-                  placeholder="Name(girl 3-12 yrs)"
+                  placeholder="Name(girl)"
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
-          {/* 
+
           <FormField
             control={form.control}
             name="childAge"
             render={({ field }) => (
               <FormItem className="w-full">
-                <Input
-                  placeholder="Age"
-                  {...field}
-                  className="input-field-register"
-                  {...(register("childAge"),
-                  {
-                    valueAsNumber: true,
-                  })}
-                />
-                <FormMessage>
-                  {form.formState.errors.childAge?.message}
-                </FormMessage>
+                <FormControl>
+                  <div>
+                    <Input
+                      type="number"
+                      placeholder="Age (3-12yrs) "
+                      {...field}
+                      className="input-field-register "
+                    />{" "}
+                  </div>
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
-          /> */}
-
+          />
+        </div>
+        <div className="flex flex-col gap-5 md:flex-row">
           {/* School and Class Information */}
           <FormField
             control={form.control}
@@ -113,6 +120,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -127,6 +135,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -144,6 +153,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -158,6 +168,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -196,6 +207,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -210,6 +222,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -226,6 +239,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -240,6 +254,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -256,6 +271,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -294,6 +310,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="textarea rounded-2xl"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -311,6 +328,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                   {...field}
                   className="input-field-register"
                 />
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -394,14 +412,27 @@ const ChildForm: React.FC<ChildFormProps> = () => {
         </div>
 
         {/* Submit Button */}
-        <Button
+        {/* <Button
           type="submit"
           size="lg"
           disabled={form.formState.isSubmitting}
           className="button col-span-2 w-full"
         >
           {form.formState.isSubmitting ? "Submitting..." : "Submit and Pay"}
-        </Button>
+        </Button> */}
+        <FormField
+          control={form.control}
+          name="nextOfKinContact"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <PaymentForm
+                FormSubmitstatus={form.formState.isSubmitting}
+                FormErrorStatus={form.formState.errors}
+                childName={globalChildName}
+              />
+            </FormItem>
+          )}
+        />
       </form>
     </Form>
   );
