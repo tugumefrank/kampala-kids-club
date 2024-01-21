@@ -52,7 +52,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
       const res = await createChild(values);
       console.log(res);
       if (res) {
-        toast(<PaymentSucess />);
+        // toast(<PaymentSucess />);
       }
     } catch (error) {
       console.log(error);
