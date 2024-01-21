@@ -25,20 +25,10 @@ import Image from "next/image";
 import DatePicker from "react-datepicker";
 import { useUploadThing } from "@/lib/uploadthing";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
-import { createEvent, updateEvent } from "@/lib/actions/event.actions";
+import { createChild, ChildPayment } from "@/lib/actions/register.actions";
 import { IEvent } from "@/lib/database/models/event.model";
 import toast, { Toaster } from "react-hot-toast";
 import PaymentForm from "@/components/shared/PaymentForm";
@@ -58,7 +48,15 @@ const ChildForm: React.FC<ChildFormProps> = () => {
     // toast(<PaymentSucess />);
     const childname = values.childName;
     globalChildName = childname;
-    console.log(childname);
+    try {
+      const res = await createChild(values);
+      console.log(res);
+      if (res) {
+        toast(<PaymentSucess />);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

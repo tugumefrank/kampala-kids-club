@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
-
+import React, { useState } from "react";
 import { Button } from "../ui/button";
-import toast, { Toaster } from "react-hot-toast";
-
+import { ChildPayment } from "@/lib/actions/register.actions";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import {
   Select,
   SelectContent,
@@ -28,12 +25,41 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
   const [mobileNumber, setMobileNumber] = useState("");
   const [mobileNetwork, setMobileNetwork] = useState("");
   const [status, setStatus] = useState("");
-  console.log(FormErrorStatus);
-  console.log(FormSubmitstatus);
   const shouldRenderForm = Object.keys(FormErrorStatus).length === 0;
-  console.log(shouldRenderForm);
   const [dynamicClassNames, setDynamicClassNames] = useState("");
   const [click, setClick] = useState(false);
+  console.log(mobileNumber, mobileNetwork);
+  const onCheckout = async () => {
+    const order = {
+      mobileNumber,
+      mobileNetwork,
+    };
+    try {
+      const response = await ChildPayment(order);
+      console.log(response);
+
+      // Check if the response has a redirect URL
+      if (
+        response &&
+        response.flutterwaveResponse &&
+        response.flutterwaveResponse.meta &&
+        response.flutterwaveResponse.meta.authorization &&
+        response.flutterwaveResponse.meta.authorization.redirect
+      ) {
+        // Redirect to the specified URL
+        window.location.href =
+          response.flutterwaveResponse.meta.authorization.redirect;
+      } else if ((response.message = "internal server error")) {
+        setStatus("backend service unvailable");
+        console.log(status);
+      } else {
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      // Handle the error as needed
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -95,7 +121,7 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
             <Button
               type="submit"
               className="button sm:w-fit"
-              // onClick={onCheckout=()=>{}}
+              onClick={onCheckout}
             >
               Process Payment
             </Button>

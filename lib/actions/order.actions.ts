@@ -1,6 +1,5 @@
 "use server";
 
-import Stripe from "stripe";
 import {
   CheckoutOrderParams,
   CreateOrderParams,
