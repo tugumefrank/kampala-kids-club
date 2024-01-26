@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { ChildPayment } from "@/lib/actions/register.actions";
 import {
@@ -31,7 +31,9 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
   const [click, setClick] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentUrl, setPaymentUrl] = useState("");
+
   const onCheckout = async () => {
+    // const order = createOrder();
     const order = {
       mobileNumber,
       mobileNetwork,
@@ -79,7 +81,7 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
         </DialogTrigger>
         {shouldRenderForm ? (
           <DialogContent
-            className={`sm:max-w-[100] bg-slate-200 ${dynamicClassNames}`}
+            className={`sm:max-w-[100] bg-slate-200  ${dynamicClassNames}`}
             onInteractOutside={(e) => {
               e.preventDefault();
               e.preventDefault();
