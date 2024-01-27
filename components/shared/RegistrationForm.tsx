@@ -33,6 +33,12 @@ import { IEvent } from "@/lib/database/models/event.model";
 import toast, { Toaster } from "react-hot-toast";
 import PaymentForm from "@/components/shared/PaymentForm";
 
+// const order = createOrder();
+
+// Now you can use order.mobileNumber and order.mobileNetwork as needed
+// console.log("Mobile Number:", order.mobileNumber);
+// console.log("Mobile Network:", order.mobileNetwork);
+
 type ChildFormProps = {
   // Your prop types here
 };
@@ -48,12 +54,14 @@ const ChildForm: React.FC<ChildFormProps> = () => {
     // toast(<PaymentSucess />);
     const childname = values.childName;
     globalChildName = childname;
+
     try {
       const res = await createChild(values);
       console.log(res);
       if (res) {
         // toast(<PaymentSucess />);
         // Call the Twilio API to send a WhatsApp message
+<<<<<<< HEAD
         const twilioResponse = await fetch("/api/twilio", {
           method: "POST",
           headers: {
@@ -66,6 +74,20 @@ const ChildForm: React.FC<ChildFormProps> = () => {
         });
         const twilioData = await twilioResponse.json();
         console.log(twilioData);
+=======
+        // const twilioResponse = await fetch("/api/twilio", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({
+        //     phone: "+256758973319",
+        //     message: "Your WhatsApp message here from nodejs",
+        //   }),
+        // });
+        // const twilioData = await twilioResponse.json();
+        // console.log(twilioData);
+>>>>>>> 914bf6fab362846da53ca3f0b038303de0855ab3
       }
     } catch (error) {
       console.log(error);
