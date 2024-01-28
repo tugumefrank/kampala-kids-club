@@ -41,7 +41,7 @@
 
 //   return new Response("", { status: 200 });
 // }
-import stripe from "stripe";
+
 import { NextResponse, NextRequest } from "next/server";
 import { createOrder } from "@/lib/actions/order.actions";
 

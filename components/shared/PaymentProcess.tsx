@@ -39,13 +39,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
           }
         }}
       >
-        <iframe
-          title="Payment"
-          src={paymentUrl}
-          width="100%"
-          height="400px"
-          frameBorder="0"
-        />
+        <iframe title="Payment" src={paymentUrl} width="100%" height="400px" />
       </DialogContent>
       <DialogFooter></DialogFooter>
     </Dialog>

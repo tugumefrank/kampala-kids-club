@@ -21,15 +21,19 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import CustomModal from "@/components/shared/PaymentProcess";
+import { useMobileContext } from "@/context/paymentContext";
 
 const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [mobileNetwork, setMobileNetwork] = useState("");
+  const { mobileNumber, setMobileNumber, mobileNetwork, setMobileNetwork } =
+    useMobileContext();
+
+  // const [mobileNetwork, setMobileNetwork] = useState("");
   const [status, setStatus] = useState("");
   const shouldRenderForm = Object.keys(FormErrorStatus).length === 0;
   const [dynamicClassNames, setDynamicClassNames] = useState("");
   const [click, setClick] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPaymentFormOpen, setisPaymentFormOpen] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
 
   const onCheckout = async () => {
@@ -53,6 +57,7 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
         // Redirect to the specified URL
         // window.location.href =
         //   response.flutterwaveResponse.meta.authorization.redirect;
+        setisPaymentFormOpen(false); // remove the paymentform model when we have sucessfully redirected to flutterwave or got a response
         setPaymentUrl(response.flutterwaveResponse.meta.authorization.redirect);
         setIsModalOpen(true);
       } else if ((response.message = "internal server error")) {
@@ -79,7 +84,7 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
             {FormSubmitstatus ? "Submitting..." : "Submit and Pay"}
           </Button>
         </DialogTrigger>
-        {shouldRenderForm ? (
+        {shouldRenderForm && isPaymentFormOpen ? (
           <DialogContent
             className={`sm:max-w-[100] bg-slate-200  ${dynamicClassNames}`}
             onInteractOutside={(e) => {

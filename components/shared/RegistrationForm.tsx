@@ -32,12 +32,8 @@ import { createChild, ChildPayment } from "@/lib/actions/register.actions";
 import { IEvent } from "@/lib/database/models/event.model";
 import toast, { Toaster } from "react-hot-toast";
 import PaymentForm from "@/components/shared/PaymentForm";
-
-// const order = createOrder();
-
-// Now you can use order.mobileNumber and order.mobileNetwork as needed
-// console.log("Mobile Number:", order.mobileNumber);
-// console.log("Mobile Network:", order.mobileNetwork);
+import { MobileProvider } from "@/context/paymentContext";
+import { useMobileContext } from "@/context/paymentContext";
 
 type ChildFormProps = {
   // Your prop types here
@@ -49,45 +45,42 @@ const ChildForm: React.FC<ChildFormProps> = () => {
     resolver: zodResolver(childFormSchema),
     defaultValues: childFormSchemaDefaultValues,
   });
+  const { mobileNumber, mobileNetwork } = useMobileContext();
+  console.log(mobileNumber, mobileNetwork);
 
   const onSubmit = async (values: z.infer<typeof childFormSchema>) => {
     // toast(<PaymentSucess />);
     const childname = values.childName;
     globalChildName = childname;
 
+    const order = {
+      mobileNumber,
+      mobileNetwork,
+    };
+
     try {
-      const res = await createChild(values);
-      console.log(res);
-      if (res) {
-        // toast(<PaymentSucess />);
-        // Call the Twilio API to send a WhatsApp message
-<<<<<<< HEAD
-        const twilioResponse = await fetch("/api/twilio", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            phone: "+256758973319",
-            message: "Your WhatsApp message here from nodejs",
-          }),
-        });
-        const twilioData = await twilioResponse.json();
-        console.log(twilioData);
-=======
-        // const twilioResponse = await fetch("/api/twilio", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     phone: "+256758973319",
-        //     message: "Your WhatsApp message here from nodejs",
-        //   }),
-        // });
-        // const twilioData = await twilioResponse.json();
-        // console.log(twilioData);
->>>>>>> 914bf6fab362846da53ca3f0b038303de0855ab3
+      const response = await ChildPayment(order);
+
+      if (response) {
+        const res = await createChild(values);
+        console.log(res);
+        if (res) {
+          toast(<PaymentSucess />);
+
+          // Call the Twilio API to send a WhatsApp message
+          const twilioResponse = await fetch("/api/twilio", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              phone: "+256758973319",
+              message: "Your WhatsApp message here from nodejs",
+            }),
+          });
+          const twilioData = await twilioResponse.json();
+          console.log(twilioData);
+        }
       }
     } catch (error) {
       console.log(error);
