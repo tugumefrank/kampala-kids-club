@@ -60,6 +60,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
 
     try {
       const response = await ChildPayment(order);
+      console.log(response);
 
       if (response) {
         const res = await createChild(values);
