@@ -23,30 +23,44 @@ import { Input } from "@/components/ui/input";
 import CustomModal from "@/components/shared/PaymentProcess";
 import { useMobileContext } from "@/context/paymentContext";
 
-const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
-  const { mobileNumber, setMobileNumber, mobileNetwork, setMobileNetwork } =
-    useMobileContext();
-
-  // const [mobileNetwork, setMobileNetwork] = useState("");
-  const [status, setStatus] = useState("");
-  const shouldRenderForm = Object.keys(FormErrorStatus).length === 0;
-  const [dynamicClassNames, setDynamicClassNames] = useState("");
-  const [click, setClick] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPaymentFormOpen, setisPaymentFormOpen] = useState(true);
-  const [paymentUrl, setPaymentUrl] = useState("");
+const PaymentForm = ({
+  FormSubmitstatus,
+  FormErrorStatus,
+  childName,
+  childDetails,
+}: any) => {
+  const {
+    mobileNumber,
+    mobileNetwork,
+    setMobileNumber,
+    setMobileNetwork,
+    status,
+    setStatus,
+    shouldRenderForm,
+    setShouldRenderForm,
+    dynamicClassNames,
+    setDynamicClassNames,
+    click,
+    setClick,
+    isModalOpen,
+    setIsModalOpen,
+    isPaymentFormOpen,
+    setIsPaymentFormOpen,
+    paymentUrl,
+    setPaymentUrl,
+  } = useMobileContext();
 
   const onCheckout = async () => {
-    // const order = createOrder();
     const order = {
       mobileNumber,
       mobileNetwork,
+      ...childDetails,
     };
+    console.log(childDetails);
     try {
       const response = await ChildPayment(order);
       console.log(response);
 
-      // Check if the response has a redirect URL
       if (
         response &&
         response.flutterwaveResponse &&
@@ -54,16 +68,11 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
         response.flutterwaveResponse.meta.authorization &&
         response.flutterwaveResponse.meta.authorization.redirect
       ) {
-        // Redirect to the specified URL
-        // window.location.href =
-        //   response.flutterwaveResponse.meta.authorization.redirect;
-        setisPaymentFormOpen(false); // remove the paymentform model when we have sucessfully redirected to flutterwave or got a response
+        setIsPaymentFormOpen(false);
         setPaymentUrl(response.flutterwaveResponse.meta.authorization.redirect);
         setIsModalOpen(true);
       } else if ((response.message = "internal server error")) {
-        setStatus("backend service unvailable");
-        console.log(status);
-      } else {
+        setStatus("backend service unavailable");
       }
     } catch (error) {
       console.error("Error during checkout:", error);
@@ -89,7 +98,7 @@ const PaymentForm = ({ FormSubmitstatus, FormErrorStatus, childName }: any) => {
             className={`sm:max-w-[100] bg-slate-200  ${dynamicClassNames}`}
             onInteractOutside={(e) => {
               e.preventDefault();
-              e.preventDefault();
+
               if (!click) {
                 setDynamicClassNames("animate-pulse border-red-500");
 

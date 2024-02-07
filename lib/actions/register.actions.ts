@@ -20,6 +20,7 @@ export async function createChild(
     handleError(error);
   }
 }
+
 type ChildPaymentParama = {
   mobileNumber: string;
   mobileNetwork: string;
@@ -27,10 +28,11 @@ type ChildPaymentParama = {
 
 //CHILD PAYMENT ACTION
 export const ChildPayment = async (order: ChildPaymentParama) => {
-  console.log(`${process.env.NODE_PUBLIC_SERVER_URL_LOCALHOST}users/create`);
+  console.log(`${process.env.NODE_PUBLIC_SERVER_URL}users/create`);
+  console.log(order);
   try {
     const res = await fetch(
-      `${process.env.NODE_PUBLIC_SERVER_URL}users/create`,
+      `${process.env.NODE_PUBLIC_SERVER_URL_LOCALHOST}users/create`,
       {
         cache: "no-store",
         method: "POST",

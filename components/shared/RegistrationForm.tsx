@@ -2,90 +2,71 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import PaymentSucess from "@/components/shared/PaymentSucess";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { childFormSchema } from "@/lib/validator";
 import * as z from "zod";
 import { childFormSchemaDefaultValues } from "@/constants";
-import Dropdown from "./Dropdown";
 import { Textarea } from "@/components/ui/textarea";
 import { FileUploader } from "./FileUploader";
 import { useState } from "react";
-import Image from "next/image";
-import DatePicker from "react-datepicker";
+
 import { useUploadThing } from "@/lib/uploadthing";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
 import { createChild, ChildPayment } from "@/lib/actions/register.actions";
-import { IEvent } from "@/lib/database/models/event.model";
+
 import toast, { Toaster } from "react-hot-toast";
 import PaymentForm from "@/components/shared/PaymentForm";
-import { MobileProvider } from "@/context/paymentContext";
-import { useMobileContext } from "@/context/paymentContext";
 
 type ChildFormProps = {
   // Your prop types here
 };
 let globalChildName: string | undefined;
+let childDetails: z.infer<typeof childFormSchema>;
 const ChildForm: React.FC<ChildFormProps> = () => {
   const [files, setFiles] = useState<File[]>([]);
   const form = useForm<z.infer<typeof childFormSchema>>({
     resolver: zodResolver(childFormSchema),
     defaultValues: childFormSchemaDefaultValues,
   });
-  const { mobileNumber, mobileNetwork } = useMobileContext();
-  console.log(mobileNumber, mobileNetwork);
 
   const onSubmit = async (values: z.infer<typeof childFormSchema>) => {
-    // toast(<PaymentSucess />);
     const childname = values.childName;
     globalChildName = childname;
+    childDetails = values;
+    // try {
+    //   const res = await createChild(values);
+    //   console.log(res);
+    //   if (res) {
+    //     toast(<PaymentSucess />);
 
-    const order = {
-      mobileNumber,
-      mobileNetwork,
-    };
-
-    try {
-      const response = await ChildPayment(order);
-      console.log(response);
-
-      if (response) {
-        const res = await createChild(values);
-        console.log(res);
-        if (res) {
-          toast(<PaymentSucess />);
-
-          // Call the Twilio API to send a WhatsApp message
-          const twilioResponse = await fetch("/api/twilio", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              phone: "+256758973319",
-              message: "Your WhatsApp message here from nodejs",
-            }),
-          });
-          const twilioData = await twilioResponse.json();
-          console.log(twilioData);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    //     // Call the Twilio API to send a WhatsApp message
+    //     const twilioResponse = await fetch("/api/twilio", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         phone: "+256758973319",
+    //         message: "Your WhatsApp message here from nodejs",
+    //       }),
+    //     });
+    //     const twilioData = await twilioResponse.json();
+    //     console.log(twilioData);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
@@ -456,6 +437,7 @@ const ChildForm: React.FC<ChildFormProps> = () => {
                 FormSubmitstatus={form.formState.isSubmitting}
                 FormErrorStatus={form.formState.errors}
                 childName={globalChildName}
+                childDetails={childDetails}
               />
             </FormItem>
           )}

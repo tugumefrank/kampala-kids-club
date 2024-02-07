@@ -1,49 +1,6 @@
-// import stripe from "stripe";
-// import { NextResponse, NextRequest } from "next/server";
-// import { createOrder } from "@/lib/actions/order.actions";
-
-// export async function POST(request: Request, response: Response) {
-//   const body = await request.text();
-//   // my code for flutter
-
-//   const secretHash = process.env.FLW_SECRET_HASH;
-//   const signature = request.headers.get("verif-hash") as string;
-//   if (!signature || signature !== secretHash) {
-//     // This request isn't from Flutterwave; discard
-//     return new Response("", { status: 400 });
-//   }
-
-//   let eventData;
-//   try {
-//     eventData = JSON.parse(body);
-//     console.log(eventData);
-//   } catch (err) {
-//     return NextResponse.json({ message: "Webhook error", error: err });
-//   }
-
-//   // Get the ID and type
-//   const eventStatus = eventData.status;
-
-//   // CREATE
-//   if (eventStatus === "successful") {
-//     const { id, amount_total, metadata } = eventData.meta;
-//     const order = {
-//       stripeId: id,
-//       eventId: metadata?.eventId || "",
-//       buyerId: metadata?.buyerId || "",
-//       totalAmount: amount_total ? (amount_total / 100).toString() : "0",
-//       createdAt: new Date(),
-//     };
-
-//     const newOrder = await createOrder(order);
-//     return NextResponse.json({ message: "OK", order: newOrder });
-//   }
-
-//   return new Response("", { status: 200 });
-// }
-
 import { NextResponse, NextRequest } from "next/server";
 import { createOrder } from "@/lib/actions/order.actions";
+import { createChild } from "@/lib/actions/register.actions";
 
 export async function POST(request: Request, response: Response) {
   const body = await request.text();
@@ -53,22 +10,22 @@ export async function POST(request: Request, response: Response) {
   const signature = request.headers.get("verif-hash") as string;
   if (!signature || signature !== secretHash) {
     // This request isn't from Flutterwave; discard
-    return new Response("", { status: 400 });
+    return new Response("not authorised", { status: 400 });
   }
 
-  let eventData;
+  let flutterWebhookResponse;
   try {
-    eventData = JSON.parse(body);
-    console.log(eventData);
+    flutterWebhookResponse = JSON.parse(body);
+    console.log(flutterWebhookResponse);
   } catch (err) {
     return NextResponse.json({ message: "Webhook error", error: err });
   }
 
-  const eventStatus = eventData.data.status;
+  const eventStatus = flutterWebhookResponse.data.status;
   console.log(eventStatus);
   // Check if the event is successful
   if (eventStatus === "successful") {
-    const { id, amount, tx_ref } = eventData.data;
+    const { id, amount, tx_ref } = flutterWebhookResponse.data;
     console.log(tx_ref);
     // Make a GET request to Flutterwave API
     // const txRef = metadata?.txRef || ""; // Replace with the actual key you expect in metadata
@@ -88,25 +45,66 @@ export async function POST(request: Request, response: Response) {
     if (transactionData.ok) {
       const transactionDetails = await transactionData.json();
       console.log(transactionDetails);
-      const { eventId } = transactionDetails.data.meta;
-      // Your existing code to create an order
-      const order = {
-        stripeId: transactionDetails.data.flw_ref,
-        eventId: eventId,
-        buyerId: transactionDetails.data.meta.buyerId,
-        totalAmount: amount ? (amount / 100).toString() : "0",
-        createdAt: new Date(),
-      };
+      const { eventId, childName } = transactionDetails.data.meta;
+      if (eventId) {
+        // Your existing code to create an order
+        const order = {
+          stripeId: transactionDetails.data.flw_ref,
+          eventId: eventId,
+          buyerId: transactionDetails.data.meta.buyerId,
+          totalAmount: amount ? amount.toString() : "0",
+          createdAt: new Date(),
+        };
 
-      const newOrder = await createOrder(order);
-      return NextResponse.json({ message: "OK", order: newOrder });
-      console.log(transactionDetails);
+        const newOrder = await createOrder(order);
+        return NextResponse.json({ message: "OK", order: newOrder });
+      } else if (childName) {
+        // Logic for processing child registration
+        const {
+          childName,
+          childAge,
+          school,
+          class: className,
+          nationality,
+          residentialAddress,
+          childPhotoUrl,
+          parentGuardianName,
+          parentGuardianContact,
+          whatsappNumber,
+          placeOfWork,
+          relationshipWithApplicant,
+          parentIDUrl,
+          healthyStatus,
+          nextOfKinContact,
+        } = transactionDetails.data.meta;
+        const childDetails = {
+          childName,
+          childAge,
+          school,
+          class: className,
+          nationality,
+          residentialAddress,
+          childPhotoUrl,
+          parentGuardianName,
+          parentGuardianContact,
+          whatsappNumber,
+          placeOfWork,
+          relationshipWithApplicant,
+          parentIDUrl,
+          healthyStatus,
+          nextOfKinContact,
+        };
+
+        const newChild = await createChild(childDetails);
+        return NextResponse.json({ message: "OK", child: newChild });
+      }
     } else {
       console.error(
         "Failed to fetch Flutterwave API:",
         transactionData.status,
         transactionData.statusText
       );
+      return new Response("invalid  ref", { status: 400 });
     }
   }
 
