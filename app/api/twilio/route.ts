@@ -29,11 +29,10 @@ export async function POST(req: Request, res: Response) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID as string;
   const token = process.env.TWILIO_AUTH_TOKEN as string;
   const client = twilio(accountSid, token);
-
+  const body = await req.text();
+  const twilioData = JSON.parse(body);
+  console.log(twilioData.message);
   try {
-    const twilioData = await req.json(); // Use req.json() to parse JSON data
-    console.log("Twilio Data:", twilioData);
-
     const twilioMessage = await client.messages.create({
       body: twilioData.message,
       from: "whatsapp:+14155238886",
