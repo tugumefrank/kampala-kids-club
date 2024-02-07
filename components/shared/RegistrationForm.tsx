@@ -50,19 +50,6 @@ const ChildForm: React.FC<ChildFormProps> = () => {
     //   if (res) {
     //     toast(<PaymentSucess />);
 
-    //     // Call the Twilio API to send a WhatsApp message
-    //     const twilioResponse = await fetch("/api/twilio", {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         phone: "+256758973319",
-    //         message: "Your WhatsApp message here from nodejs",
-    //       }),
-    //     });
-    //     const twilioData = await twilioResponse.json();
-    //     console.log(twilioData);
     //   }
     // } catch (error) {
     //   console.log(error);
