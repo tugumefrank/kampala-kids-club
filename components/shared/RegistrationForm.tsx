@@ -44,16 +44,6 @@ const ChildForm: React.FC<ChildFormProps> = () => {
     const childname = values.childName;
     globalChildName = childname;
     childDetails = values;
-    // try {
-    //   const res = await createChild(values);
-    //   console.log(res);
-    //   if (res) {
-    //     toast(<PaymentSucess />);
-
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   return (

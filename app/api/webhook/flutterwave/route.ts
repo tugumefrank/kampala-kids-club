@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createOrder } from "@/lib/actions/order.actions";
 import { createChild } from "@/lib/actions/register.actions";
+import { sendTwilioMessage } from "@/lib/twilioHandler";
 
 export async function POST(request: Request, response: Response) {
   const body = await request.text();
@@ -97,18 +98,38 @@ export async function POST(request: Request, response: Response) {
 
         const newChild = await createChild(childDetails);
         // Call the Twilio API to send a WhatsApp message
-        const twilioResponse = await fetch("/api/twilio", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            phone: "+256758973319",
-            message: "Your WhatsApp message here from nodejs",
-          }),
-        });
-        const twilioData = await twilioResponse.json();
-        console.log(twilioData);
+        // Construct a meaningful message for Twilio WhatsApp
+        const twilioMessage = `
+        Payment for ${childName}'s registration has been successful! 
+        Child Details:
+        - Age: ${childAge}
+        - School: ${school}
+        - Class: ${className}
+        - Nationality: ${nationality}
+        - Residential Address: ${residentialAddress}
+        - Parent/Guardian Name: ${parentGuardianName}
+        - Parent/Guardian Contact: ${parentGuardianContact}
+        - WhatsApp Number: ${whatsappNumber}
+        - Place of Work: ${placeOfWork}
+        - Relationship with Applicant: ${relationshipWithApplicant}
+        - Parent ID or Passport: ${parentIDUrl}
+        - Healthy Status: ${healthyStatus}
+        - Next of Kin's Contact: ${nextOfKinContact}
+      `;
+
+        // Call the Twilio API to send a WhatsApp message using the handler
+        try {
+          await sendTwilioMessage("+256758973319", twilioMessage);
+        } catch (twilioError) {
+          console.error(
+            "Error during Twilio API request in main route:",
+            twilioError
+          );
+          // Handle Twilio API error from main route as needed
+          return NextResponse.json({
+            message: "Twilio API error",
+          });
+        }
         return NextResponse.json({ message: "OK", child: newChild });
       }
     } else {

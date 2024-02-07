@@ -32,7 +32,7 @@ export const ChildPayment = async (order: ChildPaymentParama) => {
   console.log(order);
   try {
     const res = await fetch(
-      `${process.env.NODE_PUBLIC_SERVER_URL_LOCALHOST}users/create`,
+      `${process.env.NODE_PUBLIC_SERVER_URL}users/create`,
       {
         cache: "no-store",
         method: "POST",

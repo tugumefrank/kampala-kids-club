@@ -10,6 +10,7 @@ export default authMiddleware({
     "/api/webhook/stripe",
     "/api/webhook/flutterwave",
     "/api/uploadthing",
+    "/api/twilio",
   ],
   ignoredRoutes: [
     "/api/webhook/clerk",
