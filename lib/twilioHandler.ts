@@ -3,7 +3,7 @@ export async function sendTwilioMessage(
   message: string
 ): Promise<any> {
   try {
-    console.log(`${process.env.NEXT_PUBLIC_SERVER_URL_LOCALHOST}api/twilio`);
+    console.log(`Testing: ${process.env.NEXT_PUBLIC_SERVER_URL}api/twilio`);
     console.log(message);
 
     const twilioResponse = await fetch(
