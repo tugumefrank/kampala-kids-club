@@ -17,7 +17,7 @@ export async function sendTwilioMessage(
         }),
       }
     );
-
+    console.log(await twilioResponse.text());
     const twilioData = await twilioResponse.json();
     console.log(twilioData);
     return twilioData;

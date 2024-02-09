@@ -125,7 +125,7 @@ export async function POST(request: Request, response: Response) {
             "Error during Twilio API request in main route:",
             twilioError
           );
-          // Handle Twilio API error from main route as needed
+          // Handle Twilio API error from main route
           return NextResponse.json({
             message: "Twilio API error",
           });
