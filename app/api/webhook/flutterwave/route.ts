@@ -100,22 +100,22 @@ export async function POST(request: Request, response: Response) {
         // Call the Twilio API to send a WhatsApp message
         // Construct a meaningful message for Twilio WhatsApp
         const twilioMessage = `
-        Payment for ${childName}'s registration has been successful! 
-        Child Details:
-        - Age: ${childAge}
-        - School: ${school}
-        - Class: ${className}
-        - Nationality: ${nationality}
-        - Residential Address: ${residentialAddress}
-        - Parent/Guardian Name: ${parentGuardianName}
-        - Parent/Guardian Contact: ${parentGuardianContact}
-        - WhatsApp Number: ${whatsappNumber}
-        - Place of Work: ${placeOfWork}
-        - Relationship with Applicant: ${relationshipWithApplicant}
-        - Parent ID or Passport: ${parentIDUrl}
-        - Healthy Status: ${healthyStatus}
-        - Next of Kin's Contact: ${nextOfKinContact}
-      `;
+          Payment for ${childName}'s registration has been successful!
+          Child Details:
+          - Age: ${childAge}
+          - School: ${school}
+          - Class: ${className}
+          - Nationality: ${nationality}
+          - Residential Address: ${residentialAddress}
+          - Parent/Guardian Name: ${parentGuardianName}
+          - Parent/Guardian Contact: ${parentGuardianContact}
+          - WhatsApp Number: ${whatsappNumber}
+          - Place of Work: ${placeOfWork}
+          - Relationship with Applicant: ${relationshipWithApplicant}
+          - Parent ID or Passport: ${parentIDUrl}
+          - Healthy Status: ${healthyStatus}
+          - Next of Kin's Contact: ${nextOfKinContact}
+        `;
 
         // Call the Twilio API to send a WhatsApp message using the handler
         try {
@@ -130,6 +130,7 @@ export async function POST(request: Request, response: Response) {
             message: "Twilio API error",
           });
         }
+
         return NextResponse.json({ message: "OK", child: newChild });
       }
     } else {

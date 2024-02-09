@@ -30,6 +30,7 @@ export async function POST(req: Request, res: Response) {
   const token = process.env.TWILIO_AUTH_TOKEN as string;
   const client = twilio(accountSid, token);
   const body = await req.text();
+  console.log(body);
   const twilioData = JSON.parse(body);
   console.log(twilioData.message);
   try {
