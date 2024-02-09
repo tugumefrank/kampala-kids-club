@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { createOrder } from "@/lib/actions/order.actions";
 import { createChild } from "@/lib/actions/register.actions";
 import { sendTwilioMessage } from "@/lib/twilioHandler";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request, response: Response) {
   const body = await request.text();
@@ -48,7 +50,7 @@ export async function POST(request: Request, response: Response) {
       console.log(transactionDetails);
       const { eventId, childName } = transactionDetails.data.meta;
       if (eventId) {
-        // Your existing code to create an order
+        // checks if the webhook has an eventID to create order
         const order = {
           stripeId: transactionDetails.data.flw_ref,
           eventId: eventId,
@@ -58,6 +60,16 @@ export async function POST(request: Request, response: Response) {
         };
 
         const newOrder = await createOrder(order);
+        if (newOrder) {
+          revalidatePath("/profile"); // Update cached profile
+          redirect("/profile"); // Navigate to the profile for tickets
+        } else {
+          return NextResponse.json({
+            message: "Order creation failed",
+            order: null,
+          });
+        }
+
         return NextResponse.json({ message: "OK", order: newOrder });
       } else if (childName) {
         // Logic for processing child registration
