@@ -34,11 +34,17 @@ export async function POST(req: Request, res: Response) {
   const twilioData = JSON.parse(body);
   console.log(twilioData.message);
   try {
-    const twilioMessage = await client.messages.create({
-      body: twilioData.message,
-      from: "whatsapp:+14155238886",
-      to: "whatsapp:+256709738858",
-    });
+    const twilioMessage = await client.messages
+      .create({
+        body: twilioData.message,
+        from: "whatsapp:+14155238886",
+        to: "whatsapp:+256709738858",
+      })
+      .then((message) => console.log(message))
+      .catch((error) => {
+        // You can implement your fallback code here
+        console.log(error);
+      });
 
     return NextResponse.json({ message: twilioMessage });
   } catch (error) {
