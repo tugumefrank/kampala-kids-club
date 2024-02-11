@@ -22,7 +22,8 @@ import {
 import { Input } from "@/components/ui/input";
 import CustomModal from "@/components/shared/PaymentProcess";
 import { useMobileContext } from "@/context/paymentContext";
-
+import { useRouter } from "next/router";
+import EventSource from "eventsource";
 const PaymentForm = ({
   FormSubmitstatus,
   FormErrorStatus,
@@ -49,8 +50,28 @@ const PaymentForm = ({
     paymentUrl,
     setPaymentUrl,
   } = useMobileContext();
+  const router = useRouter();
 
   const onCheckout = async () => {
+    const [isOrderCreated, setIsOrderCreated] = useState(false);
+    const [redirectUrl, setRedirectUrl] = useState(null); // Store redirect URL from API
+    useEffect(() => {
+      // Initiate the first call to connect to SSE API
+      const eventSource = new EventSource("/api/stream");
+
+      eventSource.addEventListener("message", (event) => {
+        // Parse the data received from the stream into JSON
+        // Add it the list of messages seen on the page
+        const tmp = JSON.parse(event.data);
+        console.log(tmp);
+        // Do something with the obtained message
+      });
+
+      // As the component unmounts, close listener to SSE API
+      return () => {
+        eventSource.close();
+      };
+    }, []);
     const order = {
       mobileNumber,
       mobileNetwork,

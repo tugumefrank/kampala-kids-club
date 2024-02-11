@@ -23,6 +23,7 @@
     "@uploadthing/react": "^6.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "eventsource": "^2.0.2",
     "flutterwave-node-v3": "^1.1.6",
     "lucide-react": "^0.294.0",
     "mongodb": "^6.3.0",
@@ -45,6 +46,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/eventsource": "^1.1.15",
     "@types/node": "^20",
     "@types/react": "^18.2.47",
     "@types/react-datepicker": "^4.19.3",

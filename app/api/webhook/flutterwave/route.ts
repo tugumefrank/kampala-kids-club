@@ -6,16 +6,17 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request, response: Response) {
-  const body = await request.text();
-
+  const isClientRequest = request.headers.get("X-Client-Request") === "true";
   const flutterwaveSecretKey = process.env.FLW_SECRET_KEY;
-  const secretHash = process.env.FLW_SECRET_HASH;
-  const signature = request.headers.get("verif-hash") as string;
-  if (!signature || signature !== secretHash) {
-    // This request isn't from Flutterwave; discard
-    return new Response("not authorised", { status: 400 });
+  const body = await request.text();
+  if (!isClientRequest) {
+    const secretHash = process.env.FLW_SECRET_HASH;
+    const signature = request.headers.get("verif-hash") as string;
+    if (!signature || signature !== secretHash) {
+      // This request isn't from Flutterwave; discard
+      return new Response("not authorised", { status: 400 });
+    }
   }
-
   let flutterWebhookResponse;
   try {
     flutterWebhookResponse = JSON.parse(body);
@@ -50,7 +51,7 @@ export async function POST(request: Request, response: Response) {
       console.log(transactionDetails);
       const { eventId, childName } = transactionDetails.data.meta;
       if (eventId) {
-        // checks if the webhook has an eventID to create order
+        // checks if the webhook has an eventID to create order for event
         const order = {
           stripeId: transactionDetails.data.flw_ref,
           eventId: eventId,
@@ -61,8 +62,26 @@ export async function POST(request: Request, response: Response) {
 
         const newOrder = await createOrder(order);
         if (newOrder) {
-          revalidatePath("/profile"); // Update cached profile
-          redirect("/profile"); // Navigate to the profile for tickets
+          if (isClientRequest) {
+            // Stream data directly to the client without extensive checks
+            const customReadable = new ReadableStream({
+              start(controller) {
+                const message = "Hey, I am a message for the client to update.";
+                controller.enqueue(
+                  new TextEncoder().encode(`data: ${message}\n\n`)
+                );
+              },
+            });
+
+            return new Response(customReadable, {
+              headers: {
+                "Content-Type": "text/event-stream; charset=utf-8",
+                Connection: "keep-alive",
+                "Cache-Control": "no-cache, no-transform",
+                "Content-Encoding": "none",
+              },
+            });
+          }
         } else {
           return NextResponse.json({
             message: "Order creation failed",
