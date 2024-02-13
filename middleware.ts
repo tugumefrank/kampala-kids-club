@@ -11,6 +11,7 @@ export default authMiddleware({
     "/api/webhook/flutterwave",
     "/api/uploadthing",
     "/api/twilio",
+    "/api/sse",
   ],
   ignoredRoutes: [
     "/api/webhook/clerk",

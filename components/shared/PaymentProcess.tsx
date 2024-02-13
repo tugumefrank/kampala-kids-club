@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useMobileContext } from "@/context/paymentContext";
 
 interface CustomModalProps {
   open: boolean;
@@ -20,6 +21,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   onOpenChange,
   paymentUrl,
 }) => {
+  const { setIsPaymentFormOpen } = useMobileContext();
   const [dynamicClassNames, setDynamicClassNames] = useState("");
   const [click, setClick] = useState(false);
   return (
@@ -29,7 +31,6 @@ const CustomModal: React.FC<CustomModalProps> = ({
         className={`sm:max-w-[100] bg-slate-200 ${dynamicClassNames}`}
         onInteractOutside={(e) => {
           e.preventDefault();
-          e.preventDefault();
           if (!click) {
             setDynamicClassNames("animate-pulse border-red-500");
 
@@ -37,6 +38,11 @@ const CustomModal: React.FC<CustomModalProps> = ({
               setDynamicClassNames(""); // Reset the class after 1 second
             }, 100);
           }
+        }}
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          console.log("clicked close button");
+          setIsPaymentFormOpen(true);
         }}
       >
         <iframe title="Payment" src={paymentUrl} width="100%" height="400px" />

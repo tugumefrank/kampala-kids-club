@@ -6,17 +6,16 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request, response: Response) {
-  const isClientRequest = request.headers.get("X-Client-Request") === "true";
   const flutterwaveSecretKey = process.env.FLW_SECRET_KEY;
   const body = await request.text();
-  if (!isClientRequest) {
-    const secretHash = process.env.FLW_SECRET_HASH;
-    const signature = request.headers.get("verif-hash") as string;
-    if (!signature || signature !== secretHash) {
-      // This request isn't from Flutterwave; discard
-      return new Response("not authorised", { status: 400 });
-    }
+
+  const secretHash = process.env.FLW_SECRET_HASH;
+  const signature = request.headers.get("verif-hash") as string;
+  if (!signature || signature !== secretHash) {
+    // This request isn't from Flutterwave; discard
+    return new Response("not authorised", { status: 400 });
   }
+
   let flutterWebhookResponse;
   try {
     flutterWebhookResponse = JSON.parse(body);
@@ -48,6 +47,7 @@ export async function POST(request: Request, response: Response) {
 
     if (transactionData.ok) {
       const transactionDetails = await transactionData.json();
+
       console.log(transactionDetails);
       const { eventId, childName } = transactionDetails.data.meta;
       if (eventId) {
@@ -61,27 +61,27 @@ export async function POST(request: Request, response: Response) {
         };
 
         const newOrder = await createOrder(order);
-        if (newOrder) {
-          if (isClientRequest) {
-            // Stream data directly to the client without extensive checks
-            const customReadable = new ReadableStream({
-              start(controller) {
-                const message = "Hey, I am a message for the client to update.";
-                controller.enqueue(
-                  new TextEncoder().encode(`data: ${message}\n\n`)
-                );
-              },
-            });
+        console.log(newOrder);
 
-            return new Response(customReadable, {
-              headers: {
-                "Content-Type": "text/event-stream; charset=utf-8",
-                Connection: "keep-alive",
-                "Cache-Control": "no-cache, no-transform",
-                "Content-Encoding": "none",
-              },
-            });
-          }
+        if (newOrder) {
+          // Stream data directly to the client without extensive checks
+          const customReadable = new ReadableStream({
+            start(controller) {
+              const message = "Hey, I am a message for the client to update.";
+              controller.enqueue(
+                new TextEncoder().encode(`data: ${message}\n\n`)
+              );
+            },
+          });
+
+          return new Response(customReadable, {
+            headers: {
+              "Content-Type": "text/event-stream; charset=utf-8",
+              Connection: "keep-alive",
+              "Cache-Control": "no-cache, no-transform",
+              "Content-Encoding": "none",
+            },
+          });
         } else {
           return NextResponse.json({
             message: "Order creation failed",
@@ -128,6 +128,35 @@ export async function POST(request: Request, response: Response) {
         };
 
         const newChild = await createChild(childDetails);
+
+        if (newChild) {
+          const sseData = { data: { url: "/dashboard" } };
+          const sseMessage = `data: ${JSON.stringify(sseData)}`;
+          console.log(sseMessage);
+          const url = "http://localhost:3000/api/sse"; // Your SSE endpoint URL
+
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: sseMessage,
+              headers: {
+                "Content-Type": "text/event-stream",
+              },
+            });
+
+            if (!response.ok) {
+              console.error("SSE message failed to send:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Error sending SSE message:", error);
+          }
+        } else {
+          return NextResponse.json({
+            message: "Order creation failed",
+            order: null,
+          });
+        }
+
         // Call the Twilio API to send a WhatsApp message
         // Construct a meaningful message for Twilio WhatsApp
         const twilioMessage = `

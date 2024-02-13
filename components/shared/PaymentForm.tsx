@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { ChildPayment } from "@/lib/actions/register.actions";
 import {
@@ -22,8 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import CustomModal from "@/components/shared/PaymentProcess";
 import { useMobileContext } from "@/context/paymentContext";
-import { useRouter } from "next/router";
-import EventSource from "eventsource";
+
 const PaymentForm = ({
   FormSubmitstatus,
   FormErrorStatus,
@@ -50,28 +51,40 @@ const PaymentForm = ({
     paymentUrl,
     setPaymentUrl,
   } = useMobileContext();
+
+  const [data, setData] = useState("");
   const router = useRouter();
 
+  const fetchSseData = async () => {
+    try {
+      const response = await fetch("/api/sse");
+      const result = await response.text();
+      console.log("Data from the server:", result);
+      if (result === "/dashboard") {
+        setData(result);
+        setIsModalOpen(false);
+        router.push(result);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Initial fetch
+    fetchSseData();
+
+    // Polling interval (e.g., every 5 seconds)
+    const intervalId = setInterval(() => {
+      console.log("Fetching data...");
+      fetchSseData();
+    }, 5000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
   const onCheckout = async () => {
-    const [isOrderCreated, setIsOrderCreated] = useState(false);
-    const [redirectUrl, setRedirectUrl] = useState(null); // Store redirect URL from API
-    useEffect(() => {
-      // Initiate the first call to connect to SSE API
-      const eventSource = new EventSource("/api/stream");
-
-      eventSource.addEventListener("message", (event) => {
-        // Parse the data received from the stream into JSON
-        // Add it the list of messages seen on the page
-        const tmp = JSON.parse(event.data);
-        console.log(tmp);
-        // Do something with the obtained message
-      });
-
-      // As the component unmounts, close listener to SSE API
-      return () => {
-        eventSource.close();
-      };
-    }, []);
     const order = {
       mobileNumber,
       mobileNetwork,
