@@ -1,17 +1,29 @@
 "use client";
+import { generateComponents } from "@uploadthing/react";
 import { OurFileRouter } from "@/app/api/uploadthing/core";
-import { UploadDropzone } from "@uploadthing/react";
+// import { UploadDropzone } from "@uploadthing/react";
 import { Trash } from "lucide-react";
 import Image from "next/image";
-import { UploadFileResponse } from "uploadthing/client";
+// import { UploadFileResponse } from "uploadthing/client";
 import { IMG_MAX_LIMIT } from "./forms/product-form";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
+export const { UploadButton, UploadDropzone } =
+  generateComponents<OurFileRouter>();
 
+export type UploadFileResponse<TServerOutput> = {
+  name: string;
+  size: number;
+  key: string;
+  url: string;
+
+  // Matches what's returned from the serverside `onUploadComplete` callback
+  serverdata: TServerOutput;
+};
 interface ImageUploadProps {
   onChange?: any;
-  onRemove: (value: UploadFileResponse[]) => void;
-  value: UploadFileResponse[];
+  onRemove: (value?: any) => void;
+  value?: any;
 }
 
 export default function FileUpload({
@@ -22,17 +34,17 @@ export default function FileUpload({
   const { toast } = useToast();
   const onDeleteFile = (key: string) => {
     const files = value;
-    let filteredFiles = files.filter((item) => item.key !== key);
+    let filteredFiles = files.filter((item: any) => item.key !== key);
     onRemove(filteredFiles);
   };
-  const onUpdateFile = (newFiles: UploadFileResponse[]) => {
+  const onUpdateFile = (newFiles: any) => {
     onChange([...value, ...newFiles]);
   };
   return (
     <div>
       <div className="mb-4 flex items-center gap-4">
         {!!value.length &&
-          value?.map((item) => (
+          value?.map((item: any) => (
             <div
               key={item.key}
               className="relative w-[200px] h-[200px] rounded-md overflow-hidden"
@@ -60,7 +72,7 @@ export default function FileUpload({
       </div>
       <div>
         {value.length < IMG_MAX_LIMIT && (
-          <UploadDropzone<OurFileRouter>
+          <UploadDropzone
             className="dark:bg-zinc-800 py-2 ut-label:text-sm ut-allowed-content:ut-uploading:text-red-300"
             endpoint="imageUploader"
             config={{ mode: "auto" }}
@@ -78,7 +90,7 @@ export default function FileUpload({
             }}
             onClientUploadComplete={(res) => {
               // Do something with the response
-              const data: UploadFileResponse[] | undefined = res;
+              const data: any | undefined = res;
               if (data) {
                 onUpdateFile(data);
               }
