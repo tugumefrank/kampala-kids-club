@@ -47,44 +47,6 @@ const Checkout = ({
   const [dynamicClassNames, setDynamicClassNames] = useState("");
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(true);
   const [click, setClick] = useState(false);
-  const [message, setMessage] = useState("defalaut message");
-
-  // useEffect(() => {
-  //   // Check to see if this is a redirect back from Checkout
-  //   const query = new URLSearchParams(window.location.search);
-  //   if (query.get("success")) {
-  //     console.log("Order placed! You will receive an email confirmation.");
-  //   }
-
-  //   if (query.get("canceled")) {
-  //     console.log(
-  //       "Order canceled -- continue to shop around and checkout when you’re ready."
-  //     );
-  //   }
-  // }, []);
-  useEffect(() => {
-    // Initiate the first call to connect to SSE API
-    const eventSource = new EventSource("/api/webhook/flutterwave");
-    if (typeof eventSource !== "undefined") {
-      console.log("working");
-    } else {
-      console.log("not working");
-    }
-    eventSource.onmessage = (event) => {
-      // Parse the data received from the stream into JSON
-      // Add it the list of messages seen on the page
-      const tmp = JSON.parse(event.data);
-      console.log(tmp);
-      setMessage(tmp);
-
-      // Do something with the obtained message
-    };
-
-    // As the component unmounts, close listener to SSE API
-    return () => {
-      eventSource.close();
-    };
-  }, []);
 
   const onCheckout = async () => {
     const order = {
