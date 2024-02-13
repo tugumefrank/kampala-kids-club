@@ -140,7 +140,7 @@ export async function POST(request: Request, response: Response) {
               method: "POST",
               body: sseMessage,
               headers: {
-                "Content-Type": "text/event-stream",
+                "Content-Type": "application/json",
               },
             });
 
