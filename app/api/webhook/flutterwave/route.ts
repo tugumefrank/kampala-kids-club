@@ -133,8 +133,8 @@ export async function POST(request: Request, response: Response) {
           const sseData = { data: { url: "/dashboard" } };
           const sseMessage = `data: ${JSON.stringify(sseData)}`;
           console.log(sseMessage);
-          const url = `${process.env.NEXT_PUBLIC_SERVER_URL}`; // Your SSE endpoint URL
-
+          const url = `${process.env.NEXT_PUBLIC_SERVER_URL}api/sse`; // Your SSE endpoint URL
+          console.log(url);
           try {
             const response = await fetch(url, {
               method: "POST",
