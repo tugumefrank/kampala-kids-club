@@ -201,6 +201,9 @@ export async function POST(request: Request, response: Response) {
       );
       return new Response("invalid  ref", { status: 400 });
     }
+  } else {
+    console.log(flutterWebhookResponse.data.status);
+    console.log(flutterWebhookResponse.data.message);
   }
 
   return new Response("wel", { status: 200 });
