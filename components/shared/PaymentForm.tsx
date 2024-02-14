@@ -78,7 +78,7 @@ const PaymentForm = ({
     const intervalId = setInterval(() => {
       console.log("Fetching data...");
       fetchSseData();
-    }, 5000);
+    }, 1000);
 
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
