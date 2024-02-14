@@ -130,7 +130,7 @@ export async function POST(request: Request, response: Response) {
         const newChild = await createChild(childDetails);
 
         if (newChild) {
-          const sseData = { data: { url: "/dashboard" } };
+          const sseData = { data: { urlPassed: "/dashboard" } };
           const sseMessage = `data: ${JSON.stringify(sseData)}`;
           console.log(sseMessage);
           const url = `${process.env.NEXT_PUBLIC_SERVER_URL}api/sse`; // Your SSE endpoint URL

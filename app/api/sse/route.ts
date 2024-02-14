@@ -14,7 +14,7 @@ async function handler(req: NextRequest, res: NextResponse) {
       console.log(data);
       // Access the received URL from the data object:
       console.log(url);
-      url = data.data.url;
+      url = data.data.urlPassed;
       console.log(url);
 
       // Handle the received data and URL (e.g., update UI, trigger new SSE messages)
