@@ -14,11 +14,10 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-const { sessionClaims } = auth();
-
-const userName = sessionClaims?.userName as string;
 
 export default async function page() {
+  const { sessionClaims } = auth();
+  const userName = sessionClaims?.userName as string;
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
