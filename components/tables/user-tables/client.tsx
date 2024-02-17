@@ -12,7 +12,7 @@ interface ProductsClientProps {
   data: User[];
 }
 
-export const UserClient: React.FC<ProductsClientProps> = ({ data }) => {
+export const UserClient: React.FC<ProductsClientProps> = async ({ data }) => {
   const router = useRouter();
 
   return (

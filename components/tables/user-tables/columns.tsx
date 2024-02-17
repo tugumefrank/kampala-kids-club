@@ -3,6 +3,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { User } from "@/constants/data";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Image from "next/image";
+import { AvatarImage } from "@radix-ui/react-avatar";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -25,20 +28,44 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: "NAME",
+    header: "IMAGE",
+    accessorKey: "image",
+    cell: ({ row }) => {
+      // Extract initials from name
+      const initials = row.original.childName
+        .split(/\s+/)
+        .map((namePart) => namePart[0])
+        .join("")
+        .toUpperCase();
+      return (
+        <div className="flex-shrink-0 h-12 w-12">
+          <Avatar className="flex h-12 w-12 items-center justify-center space-y-0 border">
+            <AvatarImage src={row.original.childPhotoUrl} alt="Avatar" />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "company",
-    header: "COMPANY",
+    accessorKey: "childName",
+    header: " NAME",
   },
   {
-    accessorKey: "role",
-    header: "ROLE",
+    accessorKey: "childAge",
+    header: "AGE",
   },
   {
-    accessorKey: "status",
-    header: "STATUS",
+    accessorKey: "parentGuardianName",
+    header: "PARENT",
+  },
+  {
+    accessorKey: "whatsappNumber",
+    header: " CONTACT",
+  },
+  {
+    accessorKey: "residentialAddress",
+    header: "ADDRESS",
   },
   {
     id: "actions",

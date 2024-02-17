@@ -24,6 +24,7 @@ export async function createChild(
 type ChildPaymentParama = {
   mobileNumber: string;
   mobileNetwork: string;
+  transactionType: string;
 };
 
 //CHILD PAYMENT ACTION
@@ -48,3 +49,16 @@ export const ChildPayment = async (order: ChildPaymentParama) => {
     return { message: "internal server error" };
   }
 };
+
+// FETCH ALL CHILDREN
+export async function fetchAllChildren() {
+  try {
+    await connectToDatabase();
+
+    const allChildren = await Child.find();
+
+    return JSON.parse(JSON.stringify(allChildren));
+  } catch (error) {
+    handleError(error);
+  }
+}

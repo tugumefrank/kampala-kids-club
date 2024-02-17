@@ -180,3 +180,27 @@ export interface FooterItem {
 export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
+
+// ====== CHILD ORDER PARAMS
+export type CheckoutChildOrderParams = {
+  transactionId: string;
+  buyerName?: string;
+  buyerImage?: string;
+  phoneNumber: string;
+  price: string;
+  transactionType: string; // e.g., registration, voting, etc.
+};
+
+export type CreateChildOrderParams = {
+  transactionId: string;
+  buyerName?: string;
+  buyerImage?: string;
+  phoneNumber: string;
+  price: string;
+  transactionType: string; // e.g., registration, voting, etc.
+};
+
+export type GetChildOrdersByTransactionTypeParams = {
+  searchString: string;
+  transactionType: string;
+};

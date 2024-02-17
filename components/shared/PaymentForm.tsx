@@ -32,6 +32,7 @@ const PaymentForm = ({
   childDetails,
 }: any) => {
   const {
+    transactionType,
     mobileNumber,
     mobileNetwork,
     setMobileNumber,
@@ -86,6 +87,7 @@ const PaymentForm = ({
 
   const onCheckout = async () => {
     const order = {
+      transactionType,
       mobileNumber,
       mobileNetwork,
       ...childDetails,

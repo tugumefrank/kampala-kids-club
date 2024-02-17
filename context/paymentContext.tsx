@@ -2,6 +2,7 @@
 import { createContext, useContext, ReactNode, useState } from "react";
 
 type MobileContextType = {
+  transactionType: string;
   mobileNumber: string;
   mobileNetwork: string;
   setMobileNumber: React.Dispatch<React.SetStateAction<string>>;
@@ -36,10 +37,11 @@ export const MobileProvider: React.FC<{ children: ReactNode }> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
-
+  const transactionType = "MissLittleWildlifeRegistration";
   return (
     <MobileContext.Provider
       value={{
+        transactionType,
         mobileNumber,
         mobileNetwork,
         setMobileNumber,

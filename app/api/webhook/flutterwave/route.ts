@@ -4,6 +4,8 @@ import { createChild } from "@/lib/actions/register.actions";
 import { sendTwilioMessage } from "@/lib/twilioHandler";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { createChildOrder } from "@/lib/actions/ChildOrder.actions";
+import { Console } from "console";
 
 export async function POST(request: Request, response: Response) {
   const flutterwaveSecretKey = process.env.FLW_SECRET_KEY;
@@ -61,36 +63,22 @@ export async function POST(request: Request, response: Response) {
         };
 
         const newOrder = await createOrder(order);
-        console.log(newOrder);
-
-        if (newOrder) {
-          // Stream data directly to the client without extensive checks
-          const customReadable = new ReadableStream({
-            start(controller) {
-              const message = "Hey, I am a message for the client to update.";
-              controller.enqueue(
-                new TextEncoder().encode(`data: ${message}\n\n`)
-              );
-            },
-          });
-
-          return new Response(customReadable, {
-            headers: {
-              "Content-Type": "text/event-stream; charset=utf-8",
-              Connection: "keep-alive",
-              "Cache-Control": "no-cache, no-transform",
-              "Content-Encoding": "none",
-            },
-          });
-        } else {
-          return NextResponse.json({
-            message: "Order creation failed",
-            order: null,
-          });
-        }
 
         return NextResponse.json({ message: "OK", order: newOrder });
       } else if (childName) {
+        // create ChildOrder in the database
+        const Order = {
+          transactionId: transactionDetails.data.flw_ref,
+          buyerName: transactionDetails.data.meta.parentGuardianName,
+          buyerImage: transactionDetails.data.meta.childPhotoUrl,
+          phoneNumber: transactionDetails.data.customer.phone_number,
+          price: transactionDetails.data.amount,
+          transactionType: transactionDetails.data.meta.transactionType,
+          createdAt: new Date(),
+        };
+        console.log(Order);
+        const newChildOrder = await createChildOrder(Order);
+        console.log(newChildOrder);
         // Logic for processing child registration
         const {
           childName,
