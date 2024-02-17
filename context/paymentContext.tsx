@@ -37,7 +37,7 @@ export const MobileProvider: React.FC<{ children: ReactNode }> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
-  const transactionType = "MissLittleWildlifeRegistration";
+  const transactionType = "MissLittleWildlife";
   return (
     <MobileContext.Provider
       value={{
