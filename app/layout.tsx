@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import toast, { Toaster } from "react-hot-toast";
 
 import "./globals.css";
+import ThemeProvider from "@/components/layout/ThemeToggle/theme-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,7 +28,16 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={poppins.variable}>{children}</body>
+        <body className={poppins.variable}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
