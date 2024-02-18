@@ -32,8 +32,8 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          <UserNav />
           <ThemeSwitcher />
+          <UserNav />
         </div>
       </nav>
     </div>
