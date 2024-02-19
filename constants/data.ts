@@ -144,6 +144,12 @@ export const navItems: NavItem[] = [
     label: "user",
   },
   {
+    title: "Forms",
+    href: "/dashboard/forms",
+    icon: "laptop",
+    label: "forms",
+  },
+  {
     title: "Employee",
     href: "/dashboard/employee",
     icon: "employee",
