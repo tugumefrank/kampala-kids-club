@@ -30,6 +30,7 @@ export const UserClient: React.FC<ProductsClientProps> = async ({ data }) => {
         </Button>
       </div>
       <Separator />
+
       <DataTable searchKey="name" columns={columns} data={data} />
     </>
   );
