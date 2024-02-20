@@ -4,6 +4,7 @@ import { IEvent } from "@/lib/database/models/event.model";
 import { Button } from "../ui/button";
 import { checkoutOrder } from "@/lib/actions/order.actions";
 import CustomModal from "@/components/shared/PaymentProcess";
+import { useMobileContext } from "@/context/paymentContext";
 
 import {
   Dialog,
@@ -38,15 +39,36 @@ const Checkout = ({
   email: string;
   userImage: string;
 }) => {
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [mobileNetwork, setMobileNetwork] = useState("");
-  const [status, setStatus] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [paymentUrl, setPaymentUrl] = useState("");
-  const [shouldRenderForm, setShouldRenderForm] = useState(true);
-  const [dynamicClassNames, setDynamicClassNames] = useState("");
-  const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(true);
-  const [click, setClick] = useState(false);
+  // const [mobileNumber, setMobileNumber] = useState("");
+  // const [mobileNetwork, setMobileNetwork] = useState("");
+  // const [status, setStatus] = useState("");
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [paymentUrl, setPaymentUrl] = useState("");
+  // const [shouldRenderForm, setShouldRenderForm] = useState(true);
+  // const [dynamicClassNames, setDynamicClassNames] = useState("");
+  // const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(true);
+  // const [click, setClick] = useState(false);
+  const {
+    transactionType,
+    mobileNumber,
+    mobileNetwork,
+    setMobileNumber,
+    setMobileNetwork,
+    status,
+    setStatus,
+    shouldRenderForm,
+    setShouldRenderForm,
+    dynamicClassNames,
+    setDynamicClassNames,
+    click,
+    setClick,
+    isModalOpen,
+    setIsModalOpen,
+    isPaymentFormOpen,
+    setIsPaymentFormOpen,
+    paymentUrl,
+    setPaymentUrl,
+  } = useMobileContext();
 
   const onCheckout = async () => {
     const order = {

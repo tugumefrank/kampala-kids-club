@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import ThemeProvider from "@/components/layout/ThemeToggle/theme-provider";
 import DesignerContextProvider from "@/components/context/DesignerContext";
+import { MobileProvider } from "@/context/paymentContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,15 +33,17 @@ export default function RootLayout({
       <html lang="en">
         <body className={poppins.variable}>
           <DesignerContextProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-              <Toaster />
-            </ThemeProvider>
+            <MobileProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </MobileProvider>
           </DesignerContextProvider>
         </body>
       </html>
