@@ -45,10 +45,8 @@ export async function GetFormStats() {
   };
 }
 export async function CreateForm(data: formSchemaType) {
-  console.log("Before connectToDatabase()");
-  console.log(data);
   await connectToDatabase();
-  console.log("After connectToDatabase()");
+
   const validation = formSchema.safeParse(data);
   if (!validation.success) {
     throw new Error("Form not valid");
