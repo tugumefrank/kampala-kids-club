@@ -39,7 +39,7 @@ export function WithdrawButton() {
             <ArrowDownIcon className="mr-2 h-4 w-4" /> Withdraw
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px]  bg-slate-200 ">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>
@@ -59,7 +59,7 @@ export function WithdrawButton() {
           <ArrowDownIcon className="mr-2 h-4 w-4" /> Withdraw
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="  bg-slate-200 ">
         <DrawerHeader className="text-left">
           <DrawerTitle>Edit profile</DrawerTitle>
           <DrawerDescription>
