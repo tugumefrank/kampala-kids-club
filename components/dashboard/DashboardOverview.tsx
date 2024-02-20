@@ -22,6 +22,7 @@ import DashboardStatsCards from "@/components/dashboard/DashboardStatsCards";
 import RecentTransactions from "./RecentTransactions";
 import { getTotalAmount } from "@/lib/actions/ChildOrder.actions";
 import { cn } from "@/lib/utils";
+import { WithdrawButton } from "./WithdrawButton";
 type DashboardOverviewProps = {
   userName: String;
 };
@@ -46,9 +47,7 @@ const DashboardOverview = async ({ userName }: DashboardOverviewProps) => {
                   Available Bal.{" "}
                   <span className="text-green-500">Ugx.{totalAmount}</span>
                 </p>
-                <Button className="w-full sm:w-1/2 mt-4">
-                  <ArrowDownIcon className="mr-2 h-4 w-4" /> Withdraw
-                </Button>
+                <WithdrawButton />
               </CardContent>
             </Card>
           </div>
