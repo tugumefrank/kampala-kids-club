@@ -138,7 +138,7 @@ function Designer() {
         <div
           ref={droppable.setNodeRef}
           className={cn(
-            "bg-background max-w-[920px] h-full m-auto rounded-xl flex flex-col flex-grow items-center justify-start flex-1 overflow-y-auto",
+            " bg-white dark:bg-[#121212] max-w-[920px] h-full m-auto rounded-xl flex flex-col flex-grow items-center justify-start flex-1 overflow-y-auto",
             droppable.isOver && "ring-4 ring-primary ring-inset"
           )}
         >
