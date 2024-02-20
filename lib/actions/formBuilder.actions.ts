@@ -1,3 +1,4 @@
+"use server";
 import { connectToDatabase } from "@/lib/database";
 import {
   Form,
@@ -6,6 +7,8 @@ import {
 import { handleError } from "@/lib/utils";
 import { formSchema, formSchemaType } from "@/schemas/form";
 import { currentUser } from "@clerk/nextjs";
+import { Schema } from "mongoose";
+import { Types } from "mongoose";
 
 class UserNotFoundErr extends Error {}
 
@@ -42,7 +45,10 @@ export async function GetFormStats() {
   };
 }
 export async function CreateForm(data: formSchemaType) {
+  console.log("Before connectToDatabase()");
+  console.log(data);
   await connectToDatabase();
+  console.log("After connectToDatabase()");
   const validation = formSchema.safeParse(data);
   if (!validation.success) {
     throw new Error("Form not valid");
@@ -54,7 +60,7 @@ export async function CreateForm(data: formSchemaType) {
   }
 
   const { name, description } = data;
-
+  console.log(name);
   const form = new Form({
     userId: user.id,
     name,
@@ -75,17 +81,20 @@ export async function GetForms() {
   return await Form.find({ userId: user.id }).sort({ createdAt: "desc" });
 }
 
-export async function GetFormById(id: number) {
+export async function GetFormById(id: string) {
   await connectToDatabase();
   const user = await currentUser();
   if (!user) {
     throw new UserNotFoundErr();
   }
 
-  return await Form.findOne({ userId: user.id, _id: id });
+  return await Form.findOne({
+    userId: user.id,
+    _id: new Types.ObjectId(id),
+  });
 }
 
-export async function UpdateFormContent(id: number, jsonContent: string) {
+export async function UpdateFormContent(id: string, jsonContent: string) {
   const user = await currentUser();
   if (!user) {
     throw new UserNotFoundErr();
@@ -109,7 +118,7 @@ export async function UpdateFormContent(id: number, jsonContent: string) {
     throw new Error("Error updating form content");
   }
 }
-export async function PublishForm(id: number) {
+export async function PublishForm(id: string) {
   const user = await currentUser();
   if (!user) {
     throw new UserNotFoundErr();
@@ -133,7 +142,7 @@ export async function PublishForm(id: number) {
   }
 }
 
-export async function GetFormContentByUrl(formUrl: string): Promise<string> {
+export async function GetFormContentByUrl(formUrl: string) {
   try {
     await connectToDatabase();
     const form = await Form.findOneAndUpdate(
@@ -152,16 +161,18 @@ export async function GetFormContentByUrl(formUrl: string): Promise<string> {
   }
 }
 export async function SubmitForm(formUrl: string, content: string) {
+  console.log(formUrl, content);
   try {
     await connectToDatabase();
     const form = await Form.findOneAndUpdate(
       { shareURL: formUrl, published: true },
       {
         $inc: { submissions: 1 },
-        $push: { FormSubmissions: { content } },
+        $push: { FormSubmissions: { content, submittedAt: new Date() } },
       },
       { new: true }
     );
+    console.log(form);
 
     if (!form) {
       throw new Error("Form not found or not published");
@@ -169,7 +180,30 @@ export async function SubmitForm(formUrl: string, content: string) {
 
     return form;
   } catch (error) {
+    console.log(error);
     throw new Error("Error submitting form");
+  }
+}
+
+export async function GetFormWithSubmissions(id: string) {
+  try {
+    await connectToDatabase();
+    const user = await currentUser();
+
+    if (!user) {
+      throw new UserNotFoundErr();
+    }
+
+    const formWithSubmissions = await Form.findOne({
+      userId: user.id,
+      _id: id,
+    }).populate("FormSubmissions");
+
+    return formWithSubmissions;
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error in GetFormWithSubmissions:", error);
+    throw error;
   }
 }
 // export async function CreateForm(data: formSchemaType) {

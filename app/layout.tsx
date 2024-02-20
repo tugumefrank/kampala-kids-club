@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster as Toaster2 } from "react-hot-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 import "./globals.css";
 import ThemeProvider from "@/components/layout/ThemeToggle/theme-provider";
+import DesignerContextProvider from "@/components/context/DesignerContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,14 +31,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={poppins.variable}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+          <DesignerContextProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </DesignerContextProvider>
         </body>
       </html>
     </ClerkProvider>

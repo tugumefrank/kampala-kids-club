@@ -10,7 +10,8 @@ const FormSchema = new Schema({
   content: { type: String, default: "[]" },
   visits: { type: Number, default: 0 },
   submissions: { type: Number, default: 0 },
-  shareURL: { type: String, unique: true, default: uuid() }, // You'll need to implement UUID generation logic
+  shareURL: { type: String, unique: true, default: () => uuid() },
+  FormSubmissions: [{ type: Schema.Types.Array, ref: "FormSubmissions" }],
 });
 
 const FormSubmissionsSchema = new Schema({
