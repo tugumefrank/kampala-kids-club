@@ -17,8 +17,8 @@ function PreviewDialogBtn() {
           Preview
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-screen h-screen max-h-screen max-w-full bg-[#E2E8F0]  dark:bg-slate-950 flex flex-col flex-grow p-0 gap-0 mt-10">
-        <div className="px-4 py-2 border-b">
+      <DialogContent className="w-screen h-full  max-w-full bg-[#E2E8F0]  dark:bg-slate-950 flex flex-col flex-grow p-0 gap-0 mt-10">
+        <div className="px-4 py-2 border-b bg-white  dark:bg-black">
           <p className="text-lg font-bold text-black dark:text-white">
             Form preview
           </p>
@@ -26,8 +26,8 @@ function PreviewDialogBtn() {
             This is how your form will look like to your users.
           </p>
         </div>
-        <div className="bg-accent flex flex-col flex-grow items-center justify-center p-4 bg-[url(/paper.svg)] dark:bg-[url(/paper-dark.svg)] overflow-y-auto">
-          <div className="max-w-[700px] flex flex-col gap-4 flex-grow bg-[#E2E8F0] dark:bg-slate-950 h-full w-full rounded-2xl p-8 overflow-y-auto">
+        <div className="flex flex-col flex-grow items-center justify-center p-4 bg-[#E2E8F0] dark:bg-zinc-900  overflow-y-auto">
+          <div className="max-w-[760px] flex flex-col gap-4 flex-grow bg-white dark:bg-black w-full p-8 overflow-y-auto  border-t-8 border-indigo-500 rounded-lg">
             {elements.map((element) => {
               const FormComponent = FormElements[element.type].formComponent;
               return (

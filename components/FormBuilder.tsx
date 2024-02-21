@@ -71,7 +71,7 @@ function FormBuilder({ form }: { form: any }) {
           numberOfPieces={1000}
         />
         <div className="flex flex-col items-center justify-center h-full w-full bg-[#E2E8F0] dark:bg-zinc-900 ">
-          <div className="max-w-md  border rounded-lg bg-white dark:bg-[#1F2937]  text-center shadow-5 p-4">
+          <div className="max-w-md  border rounded-lg bg-white dark:bg-[#1F2937]  text-center shadow-5 p-4 ">
             <h1 className="text-center text-2xl font-bold text-primary border-b pb-2 mb-10">
               🎊🎊 Form Published 🎊🎊
             </h1>
@@ -96,13 +96,16 @@ function FormBuilder({ form }: { form: any }) {
             </div>
             <div className="flex justify-between">
               <Button variant={"link"} asChild>
-                <Link href={"/"} className="gap-2">
+                <Link href={"/dashboard/myforms"} className="gap-2">
                   <BsArrowLeft />
-                  Go back home
+                  Back to Dashboard
                 </Link>
               </Button>
               <Button variant={"link"} asChild>
-                <Link href={`/forms/${form._id}`} className="gap-2">
+                <Link
+                  href={`/dashboard/myforms/forms/${form._id}`}
+                  className="gap-2"
+                >
                   Form details
                   <BsArrowRight />
                 </Link>
@@ -117,7 +120,7 @@ function FormBuilder({ form }: { form: any }) {
   return (
     <DndContext sensors={sensors}>
       <main className="flex flex-col w-full">
-        <nav className="flex justify-between border-b-2 p-4 gap-3 items-center">
+        <nav className="flex justify-between border-b-2 p-4 gap-3 bg-white dark:bg-[#121212] items-center">
           <h2 className="truncate font-medium">
             <span className="text-muted-foreground mr-2">Form:</span>
             {form.name}

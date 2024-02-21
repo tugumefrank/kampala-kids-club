@@ -7,6 +7,9 @@ import { HiCursorClick } from "react-icons/hi";
 import { toast } from "./ui/use-toast";
 import { ImSpinner2 } from "react-icons/im";
 import { SubmitForm } from "@/lib/actions/formBuilder.actions";
+import Link from "next/link";
+import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { useRouter } from "next/navigation";
 
 function FormSubmitComponent({
   formUrl,
@@ -15,6 +18,7 @@ function FormSubmitComponent({
   content: FormElementInstance[];
   formUrl: string;
 }) {
+  const router = useRouter();
   const formValues = useRef<{ [key: string]: string }>({});
   const formErrors = useRef<{ [key: string]: boolean }>({});
   const [renderKey, setRenderKey] = useState(new Date().getTime());
@@ -73,11 +77,35 @@ function FormSubmitComponent({
   if (submitted) {
     return (
       <div className="flex justify-center w-full h-full items-center p-8">
-        <div className="max-w-[620px] flex flex-col gap-4 flex-grow bg-background w-full p-8 overflow-y-auto border shadow-xl shadow-blue-700 rounded">
+        <div className="max-w-[620px] flex flex-col gap-4 flex-grow bg-white w-full p-8 overflow-y-auto  border-t-8 border-indigo-500 rounded-lg">
           <h1 className="text-2xl font-bold">Form submitted</h1>
           <p className="text-muted-foreground">
-            Thank you for submitting the form, you can close this page now.
+            Thank you for submitting the form
           </p>
+          <div className="flex justify-between">
+            <Button
+              variant={"link"}
+              asChild
+              onClick={() => {
+                setSubmitted(false);
+                router.push(`${window.location.origin}/submit/${formUrl}`);
+              }}
+            >
+              <Link
+                href={`${window.location.origin}/submit/${formUrl}`}
+                className="gap-2"
+              >
+                <BsArrowLeft />
+                Submit Another
+              </Link>
+            </Button>
+            <Button variant={"link"} asChild>
+              <Link href={`/`} className="gap-2">
+                Back to Home
+                <BsArrowRight />
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -87,7 +115,7 @@ function FormSubmitComponent({
     <div className="flex justify-center w-full h-full items-center p-8">
       <div
         key={renderKey}
-        className="max-w-[620px] flex flex-col gap-4 flex-grow bg-background w-full p-8 overflow-y-auto border shadow-xl shadow-blue-700 rounded"
+        className="max-w-[760px] flex flex-col gap-4 flex-grow bg-white w-full p-8 overflow-y-auto  border-t-8 border-indigo-500 rounded-lg"
       >
         {content.map((element) => {
           const FormElement = FormElements[element.type].formComponent;
