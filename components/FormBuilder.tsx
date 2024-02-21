@@ -70,8 +70,8 @@ function FormBuilder({ form }: { form: any }) {
           recycle={false}
           numberOfPieces={1000}
         />
-        <div className="flex flex-col items-center justify-center h-full w-full">
-          <div className="max-w-md">
+        <div className="flex flex-col items-center justify-center h-full w-full bg-[#E2E8F0] dark:bg-zinc-900 ">
+          <div className="max-w-md border rounded-lg bg-white dark:bg-[#1F2937]  text-center shadow-5 p-4">
             <h1 className="text-center text-4xl font-bold text-primary border-b pb-2 mb-10">
               🎊🎊 Form Published 🎊🎊
             </h1>

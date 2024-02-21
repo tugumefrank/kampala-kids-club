@@ -17,7 +17,7 @@ function PreviewDialogBtn() {
           Preview
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-screen h-screen max-h-screen max-w-full bg-[#E2E8F0]  dark:bg-slate-950 flex flex-col flex-grow p-0 gap-0">
+      <DialogContent className="w-screen h-screen max-h-screen max-w-full bg-[#E2E8F0]  dark:bg-slate-950 flex flex-col flex-grow p-0 gap-0 mt-10">
         <div className="px-4 py-2 border-b">
           <p className="text-lg font-bold text-black dark:text-white">
             Form preview
@@ -38,10 +38,10 @@ function PreviewDialogBtn() {
         </div>
         <DialogClose asChild>
           <button
-            className="absolute right-4 top-4 rounded-full p-2 bg-slate-400 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+            className="absolute right-2 top-2 rounded-full p-2 bg-slate-400 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
             aria-label="Close"
           >
-            <X className="h-6 w-6 " />
+            <X className="h-4 w-4 " />
           </button>
         </DialogClose>
       </DialogContent>
