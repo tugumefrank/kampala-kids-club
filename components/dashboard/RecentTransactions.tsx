@@ -35,7 +35,7 @@ const RecentTransactions = async () => {
           </div>
           <div className="flex flex-col ml-auto">
             <div className="ml-auto font-medium">+UGX.{order.price}</div>
-            <div className="ml-auto font-small text-sm text-blue-500">
+            <div className="ml-auto font-small text-sm text-primary">
               {order.transactionType}
             </div>
           </div>

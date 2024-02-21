@@ -51,7 +51,7 @@ export function DataTable<TData, TValue>({
         }
         className="w-full md:max-w-sm"
       />
-      <ScrollArea className="rounded-md border h-[calc(80vh-220px)]">
+      <ScrollArea className="rounded-md border border-primary h-[calc(80vh-220px)]">
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -63,7 +63,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}

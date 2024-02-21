@@ -77,7 +77,9 @@ const DashboardOverview = async ({ userName }: DashboardOverviewProps) => {
               <Card className="col-span-4 md:col-span-3">
                 <CardHeader>
                   <CardTitle>Recent Transactions</CardTitle>
-                  <CardDescription>Your recent 5 Transactions</CardDescription>
+                  <CardDescription>
+                    Your most recent Transactions
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <RecentTransactions />

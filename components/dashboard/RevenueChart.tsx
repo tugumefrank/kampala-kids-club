@@ -71,7 +71,7 @@ export function RevenueChart() {
           axisLine={false}
           tickFormatter={(value) => `$${value}`}
         />
-        <Bar dataKey="total" fill="#E2E8F0" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="total" fill="#624CF5" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
