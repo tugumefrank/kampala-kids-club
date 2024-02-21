@@ -8,6 +8,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/layout/ThemeToggle/theme-provider";
 import DesignerContextProvider from "@/components/context/DesignerContext";
 import { MobileProvider } from "@/context/paymentContext";
+import NextTopLoader from "nextjs-toploader";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={poppins.variable}>
+          <NextTopLoader />
           <DesignerContextProvider>
             <MobileProvider>
               <ThemeProvider
