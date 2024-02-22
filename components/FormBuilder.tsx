@@ -24,6 +24,7 @@ import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Confetti from "react-confetti";
 
 function FormBuilder({ form }: { form: any }) {
+  console.log(form);
   const { setElements, setSelectedElement } = useDesigner();
   const [isReady, setIsReady] = useState(false);
 
@@ -126,7 +127,7 @@ function FormBuilder({ form }: { form: any }) {
             {form.name}
           </h2>
           <div className="flex items-center gap-2">
-            <PreviewDialogBtn />
+            <PreviewDialogBtn formImageUrl={form.formImageUrl} />
             {!form.published && (
               <>
                 <SaveFormBtn id={form._id} />

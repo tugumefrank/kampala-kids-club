@@ -33,7 +33,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={poppins.variable}>
-          <NextTopLoader />
+          {/* <NextTopLoader /> */}
           <DesignerContextProvider>
             <MobileProvider>
               <ThemeProvider

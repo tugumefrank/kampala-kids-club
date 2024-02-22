@@ -16,17 +16,24 @@ async function SubmitPage({
     throw new Error("form not found");
   }
   // Log the raw content before parsing
-  console.log("Raw form content:", form.content);
+  const formImageUrl = form.formImageUrl;
+  console.log("Raw form content:", formImageUrl);
   console.log(form);
   // Parse the JSON string to get the array
-  const formContent = form ? (JSON.parse(form) as FormElementInstance[]) : [];
+  const formContent = form.content
+    ? (JSON.parse(form.content) as FormElementInstance[])
+    : [];
 
   console.log(formContent);
   // Convert to a plain JavaScript object
   const plainFormContent = formContent.map((item) => ({ ...item }));
   console.log(plainFormContent);
   return (
-    <FormSubmitComponent formUrl={params.formUrl} content={plainFormContent} />
+    <FormSubmitComponent
+      formUrl={params.formUrl}
+      content={plainFormContent}
+      formImageUrl={formImageUrl}
+    />
   );
 }
 

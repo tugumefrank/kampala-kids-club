@@ -7,6 +7,7 @@ const FormSchema = new Schema({
   published: { type: Boolean, default: false },
   name: String,
   description: { type: String, default: "" },
+  formImageUrl: String,
   content: { type: String, default: "[]" },
   visits: { type: Number, default: 0 },
   submissions: { type: Number, default: 0 },

@@ -30,7 +30,7 @@ import { BsFileEarmarkPlus } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { useMediaQuery } from "@/components/hooks/use-media-query";
 
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Drawer,
@@ -42,19 +42,40 @@ import {
   DrawerFooter,
   DrawerClose,
 } from "./ui/drawer";
+import { FormFileUploader } from "./shared/FormFileUploader";
+import { useUploadThing } from "@/lib/uploadthing";
 
 function CreateFormBtn() {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const [files, setFiles] = useState<File[]>([]);
   const router = useRouter();
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
   });
-
+  const { startUpload } = useUploadThing("imageUploader");
   async function onSubmit(values: formSchemaType) {
     console.log(values);
+    let uploadedImageUrl = values.formImageUrl;
+
+    if (files.length > 0) {
+      const uploadedImages = await startUpload(files);
+
+      if (!uploadedImages) {
+        toast({
+          title: "Error",
+          description: "error uploading image",
+        });
+        return;
+      }
+
+      uploadedImageUrl = uploadedImages[0].url;
+    }
     try {
-      const formId = await CreateForm(values);
+      const formId = await CreateForm({
+        ...values,
+        formImageUrl: uploadedImageUrl,
+      });
       console.log(formId);
       toast({
         title: "Success",
@@ -114,7 +135,24 @@ function CreateFormBtn() {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea rows={5} {...field} />
+                      <Textarea rows={3} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="formImageUrl"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Upload Form Banner Image(optinal)</FormLabel>
+                    <FormControl className="h-60">
+                      <FormFileUploader
+                        onFieldChange={field.onChange}
+                        imageUrl={field.value}
+                        setFiles={setFiles}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,14 +212,33 @@ export default CreateFormBtn;
 // function to render some fields on moile like desktop
 function ProfileForm({ className }: React.ComponentProps<"form">) {
   const router = useRouter();
+  const [files, setFiles] = useState<File[]>([]);
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
   });
-
+  const { startUpload } = useUploadThing("imageUploader");
   async function onSubmit(values: formSchemaType) {
     console.log(values);
+    let uploadedImageUrl = values.formImageUrl;
+
+    if (files.length > 0) {
+      const uploadedImages = await startUpload(files);
+
+      if (!uploadedImages) {
+        toast({
+          title: "Error",
+          description: "error uploading image",
+        });
+        return;
+      }
+
+      uploadedImageUrl = uploadedImages[0].url;
+    }
     try {
-      const formId = await CreateForm(values);
+      const formId = await CreateForm({
+        ...values,
+        formImageUrl: uploadedImageUrl,
+      });
       console.log(formId);
       toast({
         title: "Success",
@@ -221,6 +278,23 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea rows={5} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="formImageUrl"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Upload Form Banner Image(optinal)</FormLabel>
+              <FormControl className="h-60">
+                <FormFileUploader
+                  onFieldChange={field.onChange}
+                  imageUrl={field.value}
+                  setFiles={setFiles}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

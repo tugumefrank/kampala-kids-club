@@ -57,12 +57,13 @@ export async function CreateForm(data: formSchemaType) {
     throw new UserNotFoundErr();
   }
 
-  const { name, description } = data;
-  console.log(name);
+  const { name, description, formImageUrl } = data;
+  console.log(formImageUrl);
   const form = new Form({
     userId: user.id,
     name,
     description,
+    formImageUrl,
   });
 
   await form.save();
@@ -85,11 +86,26 @@ export async function GetFormById(id: string) {
   if (!user) {
     throw new UserNotFoundErr();
   }
-
-  return await Form.findOne({
-    userId: user.id,
-    _id: new Types.ObjectId(id),
-  });
+  const selectedFields = {
+    userId: 1,
+    published: 1,
+    name: 1,
+    description: 1,
+    content: 1,
+    visits: 1,
+    submissions: 1,
+    FormSubmissions: 1,
+    createdAt: 1,
+    shareURL: 1,
+    formImageUrl: 1,
+  };
+  return await Form.findOne(
+    {
+      userId: user.id,
+      _id: new Types.ObjectId(id),
+    },
+    selectedFields
+  );
 }
 
 export async function UpdateFormContent(id: string, jsonContent: string) {
@@ -153,7 +169,8 @@ export async function GetFormContentByUrl(formUrl: string) {
       throw new Error("Form not found");
     }
 
-    return form.content;
+    const { content, formImageUrl } = form;
+    return { content, formImageUrl };
   } catch (error) {
     throw new Error("Error fetching form content");
   }

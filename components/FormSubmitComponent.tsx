@@ -10,13 +10,16 @@ import { SubmitForm } from "@/lib/actions/formBuilder.actions";
 import Link from "next/link";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 function FormSubmitComponent({
   formUrl,
   content,
+  formImageUrl,
 }: {
   content: FormElementInstance[];
   formUrl: string;
+  formImageUrl: string;
 }) {
   const router = useRouter();
   const formValues = useRef<{ [key: string]: string }>({});
@@ -112,10 +115,22 @@ function FormSubmitComponent({
   }
 
   return (
-    <div className="flex justify-center w-full h-full items-center p-8">
+    <div className="flex flex-col justify-start w-full  h-full items-center p-8">
+      {formImageUrl && (
+        <div className="max-w-[760px] flex flex-col gap-4  bg-white w-full  border-t-4 border-indigo-500 rounded-lg mb-4">
+          <Image
+            src={formImageUrl}
+            alt="form image"
+            width={1000}
+            height={1000}
+            className="h-full max-h-[200px] object-cover object-center rounded-lg"
+          />
+        </div>
+      )}
+
       <div
         key={renderKey}
-        className="max-w-[760px] flex flex-col gap-4 flex-grow bg-white w-full p-8 overflow-y-auto  border-t-8 border-indigo-500 rounded-lg"
+        className="max-w-[760px] flex flex-col gap-4  bg-white w-full p-8  border-t-8 border-indigo-500 rounded-lg"
       >
         {content.map((element) => {
           const FormElement = FormElements[element.type].formComponent;
