@@ -1,5 +1,6 @@
 "use server";
 import { connectToDatabase } from "@/lib/database";
+import { revalidatePath } from "next/cache";
 import {
   Form,
   FormSubmissions,
@@ -93,15 +94,6 @@ export async function GetForms({ query }: { query?: string } = {}) {
     handleError(error);
   }
 }
-// export async function GetForms() {
-//   await connectToDatabase();
-//   const user = await currentUser();
-//   if (!user) {
-//     throw new UserNotFoundErr();
-//   }
-
-//   return await Form.find({ userId: user.id }).sort({ createdAt: "desc" });
-// }
 
 export async function GetFormById(id: string) {
   await connectToDatabase();
@@ -244,132 +236,25 @@ export async function GetFormWithSubmissions(id: string) {
     throw error;
   }
 }
-// export async function CreateForm(data: formSchemaType) {
-//   const validation = formSchema.safeParse(data);
-//   if (!validation.success) {
-//     throw new Error("form not valid");
-//   }
 
-//   try {
-//     await connectToDatabase();
+export async function deleteFormById({
+  formId,
+  path,
+}: {
+  formId: string;
+  path: string;
+}) {
+  try {
+    await connectToDatabase();
 
-//     const user = await currentUser();
-//     if (!user) {
-//       throw new UserNotFoundErr();
-//     }
+    // Delete form submissions associated with the form
+    await FormSubmissions.deleteMany({ form: formId });
 
-//     const { name, description } = data;
+    // Delete the form
 
-//     const form = await Form?.create({
-//       userId: user.id,
-//       name,
-//       description,
-//     });
-
-//     if (!form) {
-//       throw new Error("something went wrong");
-//     }
-
-//     return form.id;
-//   } catch (error) {
-//     handleError(error);
-//   }
-// }
-
-// export async function GetFormStats() {
-//   try {
-//     await connectToDatabase();
-
-//     const user = await currentUser();
-//     if (!user) {
-//       throw new UserNotFoundErr();
-//     }
-
-//     const form = await Form?.findOne({ userId: user.id });
-//     if (!form) {
-//       // Handle the case when the form is not found for the user
-//       return {
-//         visits: 0,
-//         submissions: 0,
-//         submissionRate: 0,
-//         bounceRate: 100,
-//       };
-//     }
-//     console.log(user.id);
-//     const stats = await FormSubmissions?.aggregate([
-//       {
-//         $match: {
-//           userId: user.id,
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: null,
-//           visits: { $sum: 1 },
-//           submissions: { $sum: 1 },
-//         },
-//       },
-//     ]);
-//     console.log(stats);
-//     if (!stats) {
-//       return;
-//     }
-//     const { visits, submissions } = stats[0] || { visits: 0, submissions: 0 };
-
-//     let submissionRate = 0;
-
-//     if (visits > 0) {
-//       submissionRate = (submissions / visits) * 100;
-//     }
-
-//     const bounceRate = 100 - submissionRate;
-
-//     return {
-//       visits,
-//       submissions,
-//       submissionRate,
-//       bounceRate,
-//     };
-//   } catch (error) {
-//     handleError(error);
-//   }
-// }
-// export async function GetForms() {
-//   try {
-//     await connectToDatabase();
-//     const user = await currentUser();
-
-//     if (!user) {
-//       throw new UserNotFoundErr();
-//     }
-//     console.log(user.id);
-//     // Find forms for the current user and order by createdAt in descending order
-//     return await Form?.find({
-//       userId: user.id,
-//     }).sort({ createdAt: -1 });
-//   } catch (error) {
-//     // Handle the error, log, or rethrow if needed
-//     console.error("Error in GetForms:", error);
-//     throw error;
-//   }
-// }
-
-// export async function GetFormById(id: string) {
-//   try {
-//     await connectToDatabase();
-//     const user = await currentUser();
-//     if (!user) {
-//       throw new UserNotFoundErr();
-//     }
-
-//     // Find a unique form for the current user by id
-//     return await Form?.findOne({
-//       userId: user.id,
-//       _id: id,
-//     });
-//   } catch (error) {
-//     // Handle the error, log, or rethrow if needed
-//     console.error("Error in GetFormById:", error);
-//     throw error;
-//   }
-// }
+    const deletedForm = await Form.findByIdAndDelete(formId);
+    if (deletedForm) revalidatePath(path);
+  } catch (error) {
+    handleError(error);
+  }
+}

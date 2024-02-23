@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Card,
@@ -15,26 +17,40 @@ import { LuView } from "react-icons/lu";
 import { FaWpforms } from "react-icons/fa";
 import { BiRightArrowAlt } from "react-icons/bi";
 import { FaEdit } from "react-icons/fa";
+import Image from "next/image";
+
+import { DeleteFormConfirmation } from "./DeleteFormConfirmation";
+import { useRouter } from "next/navigation";
 
 export default function FormCard({ form }: { form: any }) {
   console.log(form);
   console.log(form.content);
   const contentArray = JSON.parse(form.content);
   console.log(contentArray);
-  if (false) {
-    return (
-      <div className="flex-center min-h-[200px] w-full flex-col gap-3 rounded-[14px] bg-grey-50 py-28 text-center">
-        <h3 className="p-bold-20 md:h5-bold">No Forms Found</h3>
-        <p className="p-regular-14">come back later</p>
-      </div>
-    );
-  }
+  const router = useRouter();
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 justify-between">
-          <span className="truncate font-bold">{form.name}</span>
-          {form.published && <Badge>Published</Badge>}
+          <span className="truncate max-w-[200px] font-bold">{form.name}</span>
+          {form.published && (
+            <div className="bg-red  flex items-center justify-end gap-2">
+              <Badge>Published</Badge>
+              <div className=" flex  gap-2 rounded-xl bg-white   transition-all">
+                <Link href={`/builder/${form._id}`}>
+                  <Image
+                    src="/assets/icons/edit.svg"
+                    alt="edit"
+                    width={20}
+                    height={20}
+                  />
+                </Link>
+
+                <DeleteFormConfirmation formId={form._id} />
+              </div>
+            </div>
+          )}
+
           {!form.published && <Badge variant={"destructive"}>Draft</Badge>}
         </CardTitle>
         <CardDescription className="flex items-center justify-between text-muted-foreground text-sm">
