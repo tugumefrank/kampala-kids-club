@@ -57,7 +57,7 @@ export default function FormCard({ form }: { form: any }) {
       <CardFooter>
         {form.published && (
           <Button asChild className="w-full mt-2 text-md gap-4">
-            <Link href={`/dashboard/myforms/forms/${form.id}`}>
+            <Link href={`/dashboard/myforms/forms/${form._id}`}>
               View submissions <BiRightArrowAlt />
             </Link>
           </Button>
@@ -68,7 +68,7 @@ export default function FormCard({ form }: { form: any }) {
             variant={"secondary"}
             className="w-full mt-2 text-md gap-4"
           >
-            <Link href={`/builder/${form.id}`}>
+            <Link href={`/builder/${form._id}`}>
               Edit form <FaEdit />
             </Link>
           </Button>

@@ -128,7 +128,7 @@ export async function GetFormById(id: string) {
       _id: new Types.ObjectId(id),
     },
     selectedFields
-  );
+  ).lean();
 }
 
 export async function UpdateFormContent(id: string, jsonContent: string) {

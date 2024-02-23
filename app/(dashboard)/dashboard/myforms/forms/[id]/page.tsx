@@ -31,7 +31,8 @@ async function FormDetailPage({
   };
 }) {
   const { id } = params;
-  const form = await GetFormById(id);
+  const form: any = await GetFormById(id);
+  console.log(form);
   if (!form) {
     throw new Error("form not found");
   }
@@ -98,7 +99,7 @@ async function FormDetailPage({
       </div>
 
       <div className="container pt-10">
-        <SubmissionsTable id={form.id} />
+        <SubmissionsTable id={form._id} />
       </div>
     </>
   );
