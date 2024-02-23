@@ -17,8 +17,8 @@ export default async function Home({ searchParams }: SearchParamProps) {
         <CardStatsWrapper />
       </Suspense>
       <Separator className="my-6" />
-      <div className="flex justify-between">
-        <h2 className="text-4xl font-bold col-span-2">Your forms</h2>
+      <div className="flex flex-col gap-4 md:grid md:grid-cols-2 mx-auto md:items-end md:justify-between ">
+        <h2 className="text-4xl font-bold col-span-1">Your forms</h2>
         <FormSearch />
       </div>
 
