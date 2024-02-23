@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useTransition } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useRouter } from "next/router";
 
 import {
   AlertDialog,
@@ -45,7 +44,7 @@ export const DeleteFormConfirmation = ({ formId }: { formId: string }) => {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
           <AlertDialogDescription className="p-regular-16 text-grey-600">
-            This will permanently delete this event
+            This will permanently delete this Form and its Content
           </AlertDialogDescription>
         </AlertDialogHeader>
 

@@ -258,3 +258,22 @@ export async function deleteFormById({
     handleError(error);
   }
 }
+
+export async function updateFormPublishedStatus(formId: String) {
+  try {
+    await connectToDatabase();
+
+    // Find the form by ID and set published to false
+    const updatedForm = await Form.findByIdAndUpdate(
+      formId,
+      { published: false },
+      { new: true } // Return the updated document
+    );
+
+    return updatedForm;
+  } catch (error) {
+    // Handle any errors
+    console.error("Error updating form published status:", error);
+    throw error;
+  }
+}

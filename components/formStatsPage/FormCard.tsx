@@ -21,6 +21,7 @@ import Image from "next/image";
 
 import { DeleteFormConfirmation } from "./DeleteFormConfirmation";
 import { useRouter } from "next/navigation";
+import UpdateSubmitedForm from "./UpdateSubmitedForm";
 
 export default function FormCard({ form }: { form: any }) {
   console.log(form);
@@ -37,21 +38,20 @@ export default function FormCard({ form }: { form: any }) {
             <div className="bg-red  flex items-center justify-end gap-2">
               <Badge>Published</Badge>
               <div className=" flex  gap-2 rounded-xl bg-white   transition-all">
-                <Link href={`/builder/${form._id}`}>
-                  <Image
-                    src="/assets/icons/edit.svg"
-                    alt="edit"
-                    width={20}
-                    height={20}
-                  />
-                </Link>
-
+                <UpdateSubmitedForm formId={form._id} />
                 <DeleteFormConfirmation formId={form._id} />
               </div>
             </div>
           )}
 
-          {!form.published && <Badge variant={"destructive"}>Draft</Badge>}
+          {!form.published && (
+            <div className="bg-red  flex items-center justify-end gap-2">
+              <Badge variant={"destructive"}>Draft</Badge>
+              <div className=" flex  gap-2 rounded-xl bg-white   transition-all">
+                <DeleteFormConfirmation formId={form._id} />
+              </div>
+            </div>
+          )}
         </CardTitle>
         <CardDescription className="flex items-center justify-between text-muted-foreground text-sm">
           {formatDistance(form.createdAt, new Date(), {
