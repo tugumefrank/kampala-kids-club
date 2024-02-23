@@ -70,15 +70,38 @@ export async function CreateForm(data: formSchemaType) {
 
   return form.id;
 }
-export async function GetForms() {
-  await connectToDatabase();
-  const user = await currentUser();
-  if (!user) {
-    throw new UserNotFoundErr();
-  }
 
-  return await Form.find({ userId: user.id }).sort({ createdAt: "desc" });
+export async function GetForms({ query }: { query?: string } = {}) {
+  try {
+    await connectToDatabase();
+    const user = await currentUser();
+
+    if (!user) {
+      throw new UserNotFoundErr();
+    }
+
+    const titleCondition = query
+      ? { name: { $regex: query, $options: "i" } }
+      : {};
+
+    const conditions = {
+      $and: [{ userId: user.id }, titleCondition],
+    };
+
+    return await Form.find(conditions).sort({ createdAt: "desc" }).lean();
+  } catch (error) {
+    handleError(error);
+  }
 }
+// export async function GetForms() {
+//   await connectToDatabase();
+//   const user = await currentUser();
+//   if (!user) {
+//     throw new UserNotFoundErr();
+//   }
+
+//   return await Form.find({ userId: user.id }).sort({ createdAt: "desc" });
+// }
 
 export async function GetFormById(id: string) {
   await connectToDatabase();
