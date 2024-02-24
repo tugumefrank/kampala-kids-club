@@ -33,7 +33,7 @@ const DashboardOverview = async ({ userName }: DashboardOverviewProps) => {
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex flex-col   justify-between space-y-2 lg:flex-col lg:gap-4">
           <h2 className="text-3xl justify-center font-bold tracking-tight">
-            Hi 👋,{userName} Welcome back!
+            Hi 👋,{userName} !
           </h2>
           <div className="flex flex-col space-y-2 items-end">
             <div className="hidden md:flex items-center space-x-2">
@@ -45,7 +45,9 @@ const DashboardOverview = async ({ userName }: DashboardOverviewProps) => {
               <CardContent className="flex flex-col items-center justify-center gap-2 h-full sm:flex-row">
                 <p className="text-sm font-medium leading-none mt-4 mb-0 sm:mb-0">
                   Available Bal.{" "}
-                  <span className="text-green-500">Ugx.{totalAmount}</span>
+                  <span className="text-black font-semibold">
+                    UGX.{totalAmount}
+                  </span>
                 </p>
                 <WithdrawButton />
               </CardContent>
