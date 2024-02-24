@@ -30,7 +30,7 @@ const DashboardOverview = async ({ userName }: DashboardOverviewProps) => {
   const totalAmount = await getTotalAmount();
   return (
     <ScrollArea className="h-full">
-      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+      <div className="container flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex flex-col   justify-between space-y-2 lg:flex-col lg:gap-4">
           <h2 className="text-3xl justify-center font-bold tracking-tight">
             Hi 👋,{userName} !
