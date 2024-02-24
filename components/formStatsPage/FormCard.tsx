@@ -33,7 +33,9 @@ export default function FormCard({ form }: { form: any }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 justify-between">
-          <span className="truncate max-w-[200px] font-bold">{form.name}</span>
+          <span className="truncate capitalize text-[15px] max-w-[100px] font-bold sm:max-w-[200px] sm:text-lg">
+            {form.name}
+          </span>
           {form.published && (
             <div className="bg-red  flex items-center justify-end gap-2">
               <Badge>Published</Badge>

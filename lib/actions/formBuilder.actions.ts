@@ -58,13 +58,15 @@ export async function CreateForm(data: formSchemaType) {
     throw new UserNotFoundErr();
   }
 
-  const { name, description, formImageUrl } = data;
+  const { name, description, formImageUrl, price, isFree } = data;
   console.log(formImageUrl);
   const form = new Form({
     userId: user.id,
     name,
     description,
     formImageUrl,
+    price,
+    isFree,
   });
 
   await form.save();

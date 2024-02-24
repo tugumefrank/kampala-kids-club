@@ -7,6 +7,8 @@ const FormSchema = new Schema({
   published: { type: Boolean, default: false },
   name: String,
   description: { type: String, default: "" },
+  price: { type: String, default: "" },
+  isFree: { type: Boolean, default: false },
   formImageUrl: String,
   content: { type: String, default: "[]" },
   visits: { type: Number, default: 0 },
