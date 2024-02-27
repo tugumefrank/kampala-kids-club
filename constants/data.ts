@@ -150,10 +150,10 @@ export const navItems: NavItem[] = [
     label: "forms",
   },
   {
-    title: "Employee",
-    href: "/dashboard/employee",
+    title: "Events",
+    href: "/dashboard/events",
     icon: "employee",
-    label: "employee",
+    label: "events",
   },
   {
     title: "Profile",
