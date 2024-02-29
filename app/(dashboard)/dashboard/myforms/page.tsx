@@ -12,7 +12,7 @@ import NoFormsCard from "@/components/formStatsPage/NoFormsCard";
 export default async function Home({ searchParams }: SearchParamProps) {
   const searchText = (searchParams?.query as string) || "";
   return (
-    <div className="container pt-4">
+    <div className="container pt-4 mb-8">
       <Suspense fallback={<StatsCards loading={true} />}>
         <CardStatsWrapper />
       </Suspense>

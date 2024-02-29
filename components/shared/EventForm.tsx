@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { eventFormSchema } from "@/lib/validator";
 import * as z from "zod";
 import { eventDefaultValues } from "@/constants";
-import Dropdown from "./Dropdown";
+import EventCategoryDropdown from "./EventCategoryDropdown";
 import { Textarea } from "@/components/ui/textarea";
 import { FileUploader } from "./FileUploader";
 import { useState } from "react";
@@ -29,6 +29,9 @@ import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
 import { createEvent, updateEvent } from "@/lib/actions/event.actions";
 import { IEvent } from "@/lib/database/models/event.model";
+import EventTypeDropdown from "./EventTypeDropdown";
+import { toast } from "../ui/use-toast";
+import { ImSpinner2 } from "react-icons/im";
 
 type EventFormProps = {
   userId: string | null;
@@ -39,6 +42,7 @@ type EventFormProps = {
 
 const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const initialValues =
     event && type === "Update"
       ? {
@@ -49,7 +53,18 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
       : eventDefaultValues;
   const router = useRouter();
 
-  const { startUpload } = useUploadThing("imageUploader");
+  const { startUpload } = useUploadThing("imageUploader", {
+    onUploadBegin: () => {
+      setUploading(true);
+    },
+    onClientUploadComplete: () => {
+      setUploading(false);
+      toast({
+        title: "Success",
+        description: "Image upload complete",
+      });
+    },
+  });
 
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
@@ -74,14 +89,20 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         const newEvent = await createEvent({
           event: { ...values, imageUrl: uploadedImageUrl },
           userId,
-          path: "/profile",
+          path: "/dashboard/events",
         });
 
         if (newEvent) {
           form.reset();
-          router.push(`/events/${newEvent._id}`);
+
+          router.push(`/dashboard/events`);
         }
       } catch (error) {
+        toast({
+          title: "Error",
+          description: "Something went wrong",
+          variant: "destructive",
+        });
         console.log(error);
       }
     }
@@ -104,6 +125,11 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           router.push(`/events/${updatedEvent._id}`);
         }
       } catch (error) {
+        toast({
+          title: "Error",
+          description: "Something went wrong",
+          variant: "destructive",
+        });
         console.log(error);
       }
     }
@@ -115,6 +141,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-5"
       >
+        {JSON.stringify(form.formState.errors, null, 2)}
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
             control={form.control}
@@ -138,7 +165,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Dropdown
+                  <EventCategoryDropdown
                     onChangeHandler={field.onChange}
                     value={field.value}
                   />
@@ -157,7 +184,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               <FormItem className="w-full">
                 <FormControl className="h-72">
                   <Textarea
-                    placeholder="Description"
+                    placeholder="Event Description"
                     {...field}
                     className="textarea rounded-2xl"
                   />
@@ -170,7 +197,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
             control={form.control}
             name="imageUrl"
             render={({ field }) => (
-              <FormItem className="w-full">
+              <FormItem className="w-full relative m-0 p-0">
                 <FormControl className="h-72">
                   <FileUploader
                     onFieldChange={field.onChange}
@@ -178,6 +205,18 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                     setFiles={setFiles}
                   />
                 </FormControl>
+                {uploading && (
+                  <div className="absolute inset-0 flex items-center h-full justify-center w-full object-cover  bg-black bg-opacity-50 p-0 m-0">
+                    <div className="flex items-center text-white">
+                      <p className="mr-2">Uploading</p>
+                      <div className="flex items-center">
+                        <div className="h-2 w-2 bg-white rounded-full animate-bounce delay-100"></div>
+                        <div className="h-2 w-2 bg-white rounded-full ml-1 animate-bounce delay-200"></div>
+                        <div className="h-2 w-2 bg-white rounded-full ml-1 animate-bounce delay-300"></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <FormMessage />
               </FormItem>
             )}
@@ -187,29 +226,75 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         <div className="flex flex-col gap-5 md:flex-row">
           <FormField
             control={form.control}
-            name="location"
+            name="eventType"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
-                    <Image
-                      src="/assets/icons/location-grey.svg"
-                      alt="calendar"
-                      width={24}
-                      height={24}
-                    />
-
-                    <Input
-                      placeholder="Event location or Online"
-                      {...field}
-                      className="input-field"
-                    />
-                  </div>
+                  <EventTypeDropdown
+                    onChangeHandler={(value) => {
+                      field.onChange(value);
+                      // Reset the location and URL fields when changing event type
+                      form.setValue("location", "");
+                      form.setValue("url", "");
+                    }}
+                    value={field.value}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          {form.watch("eventType") === "Online Event" ? (
+            <FormField
+              control={form.control}
+              name="url"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+                      <Image
+                        src="/assets/icons/link.svg"
+                        alt="link"
+                        width={24}
+                        height={24}
+                      />
+                      <Input
+                        placeholder="Event URL"
+                        {...field}
+                        className="input-field"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
+                      <Image
+                        src="/assets/icons/location-grey.svg"
+                        alt="calendar"
+                        width={24}
+                        height={24}
+                      />
+                      <Input
+                        placeholder="Event location"
+                        {...field}
+                        className="input-field"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
         </div>
 
         <div className="flex flex-col gap-5 md:flex-row">
@@ -330,31 +415,6 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="url"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <div className="flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2">
-                    <Image
-                      src="/assets/icons/link.svg"
-                      alt="link"
-                      width={24}
-                      height={24}
-                    />
-
-                    <Input
-                      placeholder="URL"
-                      {...field}
-                      className="input-field"
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
 
         <Button
@@ -363,7 +423,13 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
           disabled={form.formState.isSubmitting}
           className="button col-span-2 w-full"
         >
-          {form.formState.isSubmitting ? "Submitting..." : `${type} Event `}
+          {form.formState.isSubmitting ? (
+            <div className="flex flex-col items-center justify-center w-full h-full">
+              <ImSpinner2 className="animate-spin h-12 w-12" />
+            </div>
+          ) : (
+            `${type} Event `
+          )}
         </Button>
       </form>
     </Form>

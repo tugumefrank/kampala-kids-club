@@ -19,8 +19,8 @@ export function UserNav() {
   const { isLoaded, session, isSignedIn } = useSession();
   const { user } = useUser();
 
-  console.log(isSignedIn);
-  console.log(user);
+  // console.log(isSignedIn);
+  // console.log(user);
 
   if (sessionId) {
     return (

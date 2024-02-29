@@ -6,17 +6,15 @@ export const eventFormSchema = z.object({
     .string()
     .min(3, "Description must be at least 3 characters")
     .max(400, "Description must be less than 400 characters"),
-  location: z
-    .string()
-    .min(3, "Location must be at least 3 characters")
-    .max(400, "Location must be less than 400 characters"),
+  location: z.string().optional(),
   imageUrl: z.string(),
   startDateTime: z.date(),
   endDateTime: z.date(),
   categoryId: z.string(),
+  eventType: z.string(),
   price: z.string(),
   isFree: z.boolean(),
-  url: z.string().url(),
+  url: z.string().optional(),
 });
 
 export const childFormSchema = z.object({

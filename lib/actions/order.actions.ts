@@ -13,6 +13,7 @@ import Order from "../database/models/order.model";
 import Event from "../database/models/event.model";
 import { ObjectId } from "mongodb";
 import User from "../database/models/user.model";
+import { Schema } from "mongoose";
 // const Flutterwave = require("flutterwave-node-v3");
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
@@ -107,6 +108,7 @@ export async function getOrdersByEvent({
 
     return JSON.parse(JSON.stringify(orders));
   } catch (error) {
+    console.log(error);
     handleError(error);
   }
 }
@@ -150,3 +152,22 @@ export async function getOrdersByUser({
     handleError(error);
   }
 }
+
+export const getEventNameByEventId = async (eventId: any) => {
+  try {
+    await connectToDatabase();
+
+    if (!eventId) throw new Error("Event ID is required");
+
+    const eventObjectId = new ObjectId(eventId);
+
+    const event = await Event.findById(eventObjectId);
+
+    if (!event) throw new Error("Event not found");
+
+    return event.title;
+  } catch (error) {
+    console.error("Error fetching event name: ", error);
+    throw error;
+  }
+};

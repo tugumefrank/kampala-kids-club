@@ -36,79 +36,6 @@ export const users: User[] = [
     healthyStatus: "no issue",
     nextOfKinContact: "nakyazze regina",
   },
-
-  // {
-  //   id: 2,
-  //   name: "John Doe",
-  //   company: "TechCorp",
-  //   role: "Backend Developer",
-  //   verified: true,
-  //   status: "Active",
-  // },
-  // {
-  //   id: 3,
-  //   name: "Alice Johnson",
-  //   company: "WebTech",
-  //   role: "UI Designer",
-  //   verified: true,
-  //   status: "Active",
-  // },
-  // {
-  //   id: 4,
-  //   name: "David Smith",
-  //   company: "Innovate Inc.",
-  //   role: "Fullstack Developer",
-  //   verified: false,
-  //   status: "Inactive",
-  // },
-  // {
-  //   id: 5,
-  //   name: "Emma Wilson",
-  //   company: "TechGuru",
-  //   role: "Product Manager",
-  //   verified: true,
-  //   status: "Active",
-  // },
-  // {
-  //   id: 6,
-  //   name: "James Brown",
-  //   company: "CodeGenius",
-  //   role: "QA Engineer",
-  //   verified: false,
-  //   status: "Active",
-  // },
-  // {
-  //   id: 7,
-  //   name: "Laura White",
-  //   company: "SoftWorks",
-  //   role: "UX Designer",
-  //   verified: true,
-  //   status: "Active",
-  // },
-  // {
-  //   id: 8,
-  //   name: "Michael Lee",
-  //   company: "DevCraft",
-  //   role: "DevOps Engineer",
-  //   verified: false,
-  //   status: "Active",
-  // },
-  // {
-  //   id: 9,
-  //   name: "Olivia Green",
-  //   company: "WebSolutions",
-  //   role: "Frontend Developer",
-  //   verified: true,
-  //   status: "Active",
-  // },
-  // {
-  //   id: 10,
-  //   name: "Robert Taylor",
-  //   company: "DataTech",
-  //   role: "Data Analyst",
-  //   verified: false,
-  //   status: "Active",
-  // },
 ];
 
 export type Employee = {
@@ -130,47 +57,73 @@ export type Employee = {
   profile_picture?: string | null; // Profile picture can be a string (URL) or null (if no picture)
 };
 
-export const navItems: NavItem[] = [
+export const DashItems: NavItem[] = [
   {
-    title: "Dashboard",
+    title: "Home",
     href: "/dashboard",
-    icon: "dashboard",
-    label: "Dashboard",
+    icon: "Home",
+    label: "home",
   },
   {
-    title: "User",
+    title: "Statistics",
+    href: "/dashboard/statistics",
+    icon: "dashstats",
+    label: "statistics",
+  },
+  {
+    title: "Tutorials",
     href: "/dashboard/user",
-    icon: "user",
+    icon: "tutorials",
     label: "user",
   },
+];
+export const FormItems: NavItem[] = [
   {
-    title: "Forms",
+    title: "All Forms",
     href: "/dashboard/myforms",
-    icon: "laptop",
+    icon: "allforms",
     label: "forms",
   },
   {
-    title: "Events",
+    title: "Form Orders",
+    href: "/dashboard/myforms/orders",
+    icon: "orders",
+    label: "form orders",
+  },
+];
+
+export const EventItems: NavItem[] = [
+  {
+    title: "All Events",
     href: "/dashboard/events",
-    icon: "employee",
-    label: "events",
+    icon: "allevents",
+    label: "all events",
   },
   {
-    title: "Profile",
-    href: "/dashboard/profile",
-    icon: "profile",
-    label: "profile",
+    title: "Create Event",
+    href: "/dashboard/events/create",
+    icon: "createform",
+    label: "create events",
+  },
+];
+
+export const TransactionItems: NavItem[] = [
+  {
+    title: "Withdraw History",
+    href: "/dashboard/events",
+    icon: "CreditCard",
+    label: "all events",
   },
   {
-    title: "Kanban",
-    href: "/dashboard/kanban",
-    icon: "kanban",
-    label: "kanban",
+    title: "Failed Withdraws",
+    href: "/dashboard/events",
+    icon: "CreditCard",
+    label: "all events",
   },
   {
-    title: "Login",
-    href: "/",
-    icon: "login",
-    label: "login",
+    title: "Refund History",
+    href: "/dashboard/events",
+    icon: "CreditCard",
+    label: "all events",
   },
 ];
