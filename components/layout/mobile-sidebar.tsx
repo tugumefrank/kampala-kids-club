@@ -29,7 +29,7 @@ export function MobileSidebar({ className }: SidebarProps) {
         <SheetTrigger asChild>
           <MenuIcon />
         </SheetTrigger>
-        <SheetContent side="left" className="!px-0">
+        <SheetContent side="left" className="!px-0 bg-white w-72">
           <div className="space-y-4 py-4 ">
             <div className="px-3 py-2">
               <div className="space-y-1">
