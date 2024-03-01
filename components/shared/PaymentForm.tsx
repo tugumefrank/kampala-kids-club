@@ -24,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import CustomModal from "@/components/shared/PaymentProcess";
 import { useMobileContext } from "@/context/paymentContext";
+import { childPayment } from "@/lib/actions/eventPayment.action";
 
 const PaymentForm = ({
   FormSubmitstatus,
@@ -94,18 +95,13 @@ const PaymentForm = ({
     };
     console.log(childDetails);
     try {
-      const response = await ChildPayment(order);
+      const response = await childPayment(order);
       console.log(response);
 
-      if (
-        response &&
-        response.flutterwaveResponse &&
-        response.flutterwaveResponse.meta &&
-        response.flutterwaveResponse.meta.authorization &&
-        response.flutterwaveResponse.meta.authorization.redirect
-      ) {
+      if (response && response.status == "success") {
+        console.log("data received from api end point");
         setIsPaymentFormOpen(false);
-        setPaymentUrl(response.flutterwaveResponse.meta.authorization.redirect);
+        setPaymentUrl(response.meta.authorization.redirect);
         setIsModalOpen(true);
       } else if ((response.message = "internal server error")) {
         setStatus("backend service unavailable");

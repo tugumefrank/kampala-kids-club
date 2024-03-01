@@ -2,6 +2,11 @@
 import React, { useState } from "react";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "../ui/navbar-menu";
 import { cn } from "@/utils/cn";
+import { SignedIn, UserButton, SignedOut } from "@clerk/nextjs";
+import { Link } from "lucide-react";
+
+import MobileNav from "../shared/MobileNav";
+import { Button } from "../ui/button";
 
 export function NavbarDemo() {
   return (
@@ -29,9 +34,11 @@ function Navbar({ className }: { className?: string }) {
             <HoveredLink href="/branding">Branding</HoveredLink>
           </div>
         </MenuItem>
-        <MenuItem setActive={setActive} active={active} item="Products">
-          <div className="  text-sm grid grid-cols-2 gap-10 p-4"></div>
-        </MenuItem>
+        <MenuItem
+          setActive={setActive}
+          active={active}
+          item="Products"
+        ></MenuItem>
         <MenuItem setActive={setActive} active={active} item="Pricing">
           <div className="flex flex-col space-y-4 text-sm">
             <HoveredLink href="/hobby">Hobby</HoveredLink>
@@ -48,14 +55,18 @@ function Navbar({ className }: { className?: string }) {
             <HoveredLink href="/enterprise">Enterprise</HoveredLink>
           </div>
         </MenuItem>
-        <MenuItem setActive={setActive} active={active} item="Discover">
-          <div className="flex flex-col space-y-4 text-sm">
-            <HoveredLink href="/hobby">Hobby</HoveredLink>
-            <HoveredLink href="/individual">Individual</HoveredLink>
-            <HoveredLink href="/team">Team</HoveredLink>
-            <HoveredLink href="/enterprise">Enterprise</HoveredLink>
-          </div>
-        </MenuItem>
+        <MenuItem setActive={setActive} active={active} item=""></MenuItem>
+        <div className="flex w-full justify-end gap-3">
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+            <MobileNav />
+          </SignedIn>
+          <SignedOut>
+            <Button asChild className="rounded-full" size="lg">
+              <Link href="/sign-in">Login</Link>
+            </Button>
+          </SignedOut>
+        </div>
       </Menu>
     </div>
   );

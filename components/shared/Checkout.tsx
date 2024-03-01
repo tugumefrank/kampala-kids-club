@@ -39,15 +39,6 @@ const Checkout = ({
   email: string;
   userImage: string;
 }) => {
-  // const [mobileNumber, setMobileNumber] = useState("");
-  // const [mobileNetwork, setMobileNetwork] = useState("");
-  // const [status, setStatus] = useState("");
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [paymentUrl, setPaymentUrl] = useState("");
-  // const [shouldRenderForm, setShouldRenderForm] = useState(true);
-  // const [dynamicClassNames, setDynamicClassNames] = useState("");
-  // const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(true);
-  // const [click, setClick] = useState(false);
   const {
     transactionType,
     mobileNumber,
