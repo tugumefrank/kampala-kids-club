@@ -25,7 +25,6 @@ const ChildOrderSchema = new Schema({
   transactionId: {
     type: String,
     required: true,
-    unique: true,
   },
   buyerName: {
     type: String,

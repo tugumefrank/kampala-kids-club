@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import { ChildPayment } from "@/lib/actions/register.actions";
+
 import {
   Dialog,
   DialogContent,

@@ -5,7 +5,6 @@ import { sendTwilioMessage } from "@/lib/twilioHandler";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createChildOrder } from "@/lib/actions/ChildOrder.actions";
-import { Console } from "console";
 
 export async function POST(request: Request, response: Response) {
   const flutterwaveSecretKey = process.env.FLW_SECRET_KEY;

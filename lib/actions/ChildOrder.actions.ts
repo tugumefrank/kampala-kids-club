@@ -6,7 +6,6 @@ import {
 import { handleError } from "../utils";
 import { connectToDatabase } from "../database";
 import ChildOrder from "../database/models/ChildOrder.model";
-import { ObjectId } from "mongodb";
 
 export const checkoutChildOrder = async (order: CheckoutChildOrderParams) => {
   try {
