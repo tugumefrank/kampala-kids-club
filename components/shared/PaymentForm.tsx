@@ -55,14 +55,60 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
     formValues,
   } = useMobileContext();
 
-  const fetchEvents = () => {
-    // Create a new EventSource
-    const eventSource = new EventSource(
-      `${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}events`
-    );
+  // const fetchEvents = () => {
+  //   // Create a new EventSource
+  //   const eventSource = new EventSource(
+  //     `${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}events`
+  //   );
 
-    eventSource.onmessage = (event) => {
-      // Log the event data to the console
+  //   eventSource.onmessage = (event) => {
+  //     // Log the event data to the console
+  //     const data = JSON.parse(event.data);
+  //     console.log(data);
+
+  //     if (data.paymentStatus === "success") {
+  //       setIsModalOpen(false);
+  //       toast({
+  //         title: "Success",
+  //         description: "Payment received",
+  //         variant: "default",
+  //         className: "bg-green-500",
+  //       });
+  //       onPaymentSuccess();
+  //     }
+  //   };
+
+  //   // As the component unmounts, close listener to SSE API
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // };
+  // // ...
+
+  const [ws, setWs] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    if (!ws) {
+      const websocket = new WebSocket(
+        `${
+          process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL?.replace(
+            "http",
+            "ws"
+          ) ?? ""
+        }`
+      );
+      setWs(websocket);
+    }
+
+    return () => {
+      ws?.close();
+    };
+  }, [ws]);
+
+  const fetchEvents = () => {
+    if (!ws) return;
+
+    ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log(data);
 
@@ -77,13 +123,7 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
         onPaymentSuccess();
       }
     };
-
-    // As the component unmounts, close listener to SSE API
-    return () => {
-      eventSource.close();
-    };
   };
-  // ...
 
   const onCheckout = async () => {
     const order = {
