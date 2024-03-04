@@ -56,6 +56,7 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
   } = useMobileContext();
 
   const fetchEvents = () => {
+    // Create a new EventSource
     const eventSource = new EventSource(
       `${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}events`
     );
