@@ -97,6 +97,9 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
           ) ?? ""
         }`
       );
+      websocket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
       setWs(websocket);
     }
 
