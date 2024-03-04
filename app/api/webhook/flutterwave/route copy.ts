@@ -4,10 +4,7 @@ import { createChild } from "@/lib/actions/register.actions";
 import { sendTwilioMessage } from "@/lib/twilioHandler";
 
 import { createChildOrder } from "@/lib/actions/ChildOrder.actions";
-import { app } from "@/lib/application";
-export const state = {
-  messages: [] as string[],
-};
+
 export async function POST(request: Request, response: Response) {
   const flutterwaveSecretKey = process.env.FLW_SECRET_KEY;
   const body = await request.text();
@@ -69,7 +66,6 @@ export async function POST(request: Request, response: Response) {
       } else if (childName) {
         // create ChildOrder in the database
         const Order = {
-          paymentStatus: transactionDetails.status,
           transactionId: transactionDetails.data.flw_ref,
           buyerName: transactionDetails.data.meta.parentGuardianName,
           buyerImage: transactionDetails.data.meta.childPhotoUrl,
@@ -80,25 +76,91 @@ export async function POST(request: Request, response: Response) {
         };
         console.log(Order);
         const newChildOrder = await createChildOrder(Order);
-        if (newChildOrder) {
-          fetch(`${process.env.NODE_PUBLIC_SERVER_URL}message`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ message: newChildOrder }),
-          })
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-            .catch((error) => {
-              console.error("Error:", error);
+        console.log(newChildOrder);
+        // Logic for processing child registration
+        const {
+          childName,
+          childAge,
+          school,
+          class: className,
+          nationality,
+          residentialAddress,
+          childPhotoUrl,
+          parentGuardianName,
+          parentGuardianContact,
+          whatsappNumber,
+          placeOfWork,
+          relationshipWithApplicant,
+          parentIDUrl,
+          healthyStatus,
+          nextOfKinContact,
+        } = transactionDetails.data.meta;
+        const childDetails = {
+          childName,
+          childAge,
+          school,
+          class: className,
+          nationality,
+          residentialAddress,
+          childPhotoUrl,
+          parentGuardianName,
+          parentGuardianContact,
+          whatsappNumber,
+          placeOfWork,
+          relationshipWithApplicant,
+          parentIDUrl,
+          healthyStatus,
+          nextOfKinContact,
+        };
+
+        const newChild = await createChild(childDetails);
+
+        if (newChild) {
+          const sseData = { data: { urlPassed: "/dashboard" } };
+          const sseMessage = `data: ${JSON.stringify(sseData)}`;
+          console.log(sseMessage);
+          const url = `${process.env.NEXT_PUBLIC_SERVER_URL}api/sse`; // Your SSE endpoint URL
+          console.log(url);
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: sseMessage,
+              headers: {
+                "Content-Type": "application/json",
+              },
             });
+
+            if (!response.ok) {
+              console.error("SSE message failed to send:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Error sending SSE message:", error);
+          }
+        } else {
+          return NextResponse.json({
+            message: "Order creation failed",
+            order: null,
+          });
         }
 
         // Call the Twilio API to send a WhatsApp message
         // Construct a meaningful message for Twilio WhatsApp
         const twilioMessage = `
-    form submitted
+          Payment for ${childName}'s registration has been successful!
+          Child Details:
+          - Age: ${childAge}
+          - School: ${school}
+          - Class: ${className}
+          - Nationality: ${nationality}
+          - Residential Address: ${residentialAddress}
+          - Parent/Guardian Name: ${parentGuardianName}
+          - Parent/Guardian Contact: ${parentGuardianContact}
+          - WhatsApp Number: ${whatsappNumber}
+          - Place of Work: ${placeOfWork}
+          - Relationship with Applicant: ${relationshipWithApplicant}
+          - Parent ID or Passport: ${parentIDUrl}
+          - Healthy Status: ${healthyStatus}
+          - Next of Kin's Contact: ${nextOfKinContact}
         `;
 
         // Call the Twilio API to send a WhatsApp message using the handler
@@ -115,7 +177,7 @@ export async function POST(request: Request, response: Response) {
           });
         }
 
-        return NextResponse.json({ message: "OK", order: newChildOrder });
+        return NextResponse.json({ message: "OK", child: newChild });
       }
     } else {
       console.error(

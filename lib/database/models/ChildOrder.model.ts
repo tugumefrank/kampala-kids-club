@@ -12,6 +12,7 @@ export interface IChildOrder extends Document {
 
 export type IChildOrderItem = {
   _id: string;
+  paymentStatus: string;
   transactionId: string;
   buyerName?: string;
   buyerImage?: string;
@@ -22,6 +23,10 @@ export type IChildOrderItem = {
 };
 
 const ChildOrderSchema = new Schema({
+  paymentStatus: {
+    type: String,
+    required: true,
+  },
   transactionId: {
     type: String,
     required: true,

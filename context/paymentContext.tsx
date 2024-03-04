@@ -1,5 +1,13 @@
 "use client";
-import { createContext, useContext, ReactNode, useState } from "react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useTransition,
+  TransitionStartFunction,
+  useRef,
+} from "react";
 
 type MobileContextType = {
   transactionType: string;
@@ -20,9 +28,25 @@ type MobileContextType = {
   isPaymentFormOpen: boolean;
   setIsPaymentFormOpen: React.Dispatch<React.SetStateAction<boolean>>; // Added setter
   paymentUrl: string;
-  setPaymentUrl: React.Dispatch<React.SetStateAction<string>>; // Added setter
-};
+  setPaymentUrl: React.Dispatch<React.SetStateAction<string>>;
+  pending: boolean;
+  startTransition: TransitionStartFunction;
 
+  submitted: boolean;
+  setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+  // formValues: React.MutableRefObject<{ [key: string]: string }>;
+  // formErrors: React.MutableRefObject<{ [key: string]: boolean }>;
+  formValues: { [key: string]: string };
+  setFormValues: React.Dispatch<
+    React.SetStateAction<{ [key: string]: string }>
+  >;
+  formErrors: { [key: string]: boolean };
+  setFormErrors: React.Dispatch<
+    React.SetStateAction<{ [key: string]: boolean }>
+  >;
+  renderKey: number;
+  setRenderKey: React.Dispatch<React.SetStateAction<number>>;
+};
 const MobileContext = createContext<MobileContextType | undefined>(undefined);
 
 export const MobileProvider: React.FC<{ children: ReactNode }> = ({
@@ -37,10 +61,28 @@ export const MobileProvider: React.FC<{ children: ReactNode }> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPaymentFormOpen, setIsPaymentFormOpen] = useState(true);
   const [paymentUrl, setPaymentUrl] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [pending, startTransition] = useTransition();
   const transactionType = "MissLittleWildlife";
+  // const formValues = useRef<{ [key: string]: string }>({});
+  // const formErrors = useRef<{ [key: string]: boolean }>({});
+  const [formValues, setFormValues] = useState<{ [key: string]: string }>({});
+  const [formErrors, setFormErrors] = useState<{ [key: string]: boolean }>({});
+  const [renderKey, setRenderKey] = useState(new Date().getTime());
   return (
     <MobileContext.Provider
       value={{
+        setFormValues,
+
+        formValues,
+        formErrors,
+        setFormErrors,
+        renderKey,
+        setRenderKey,
+        pending,
+        startTransition,
+        submitted,
+        setSubmitted,
         transactionType,
         mobileNumber,
         mobileNetwork,

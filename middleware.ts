@@ -1,4 +1,5 @@
 import { authMiddleware } from "@clerk/nextjs";
+import { app } from "@/lib/application";
 
 export default authMiddleware({
   publicRoutes: [

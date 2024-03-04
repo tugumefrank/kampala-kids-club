@@ -194,6 +194,7 @@ export type CheckoutChildOrderParams = {
 };
 
 export type CreateChildOrderParams = {
+  paymentStatus: string;
   transactionId: string;
   buyerName?: string;
   buyerImage?: string;

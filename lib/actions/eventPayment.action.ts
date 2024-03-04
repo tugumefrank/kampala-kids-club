@@ -18,7 +18,7 @@ export async function childPayment(order: {
   mobileNumber: string;
   mobileNetwork: string;
   transactionType: string; // Add transactionType to the interface
-  childDetails: any;
+  childDetails?: any;
 }): Promise<any> {
   const url = "https://api.flutterwave.com/v3/charges?type=mobile_money_uganda";
   const token = process.env.FLW_SECRET_KEY;

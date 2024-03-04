@@ -1,42 +1,36 @@
-import { NextRequest, NextResponse } from "next/server";
-let url: string = "";
-async function handler(req: NextRequest, res: NextResponse) {
-  // ... (Existing SSE setup)
+import { app } from "@/lib/application";
+import { TextEncoder } from "util";
 
-  if (req.method === "POST") {
-    try {
-      // Read the POST body as text:
-      const message = await req.text();
-      console.log("Received message:", message);
+export function GET(request: Request) {
+  console.log("Client connected");
+  const responseStream = new TransformStream();
+  const writer = responseStream.writable.getWriter();
+  const encoder = new TextEncoder();
 
-      // Extract data from the SSE message format:
-      const data = JSON.parse(message.split("\n\n")[0].substring(5));
-      console.log(data);
-      // Access the received URL from the data object:
-      console.log(url);
-      url = data.data.urlPassed;
-      console.log(url);
+  // Send stored events to the client
+  // Add a listener for the 'message' event
+  const messageListener = (message: any) => {
+    console.log("Message event received");
+    console.log(message);
+    // Send the message to the client
+    writer.write(encoder.encode(`data: ${message}\n\n`));
+  };
+  app.on("message", messageListener);
 
-      // Handle the received data and URL (e.g., update UI, trigger new SSE messages)
-      console.log("Received SSE data:", data, "URL:", url);
-      // ... (Your logic based on data and URL)
-    } catch (error) {
-      console.error("Error receiving SSE data:", error);
-    }
-    return NextResponse.json({ message: "OK", urlPassed: url });
-  }
-  console.log(url);
-  if (req.method === "GET") {
-    console.log(url);
-    if (url) {
-      return new Response(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    } else {
-      return new Response("no url set", { status: 400 });
-    }
-  }
+  // When the client disconnects, close the writer and remove the event listener
+  request.signal.addEventListener("abort", () => {
+    writer.close();
+    app.off("message", messageListener);
+  });
+
+  // Return the stream response and keep the connection alive
+  return new Response(responseStream.readable, {
+    // Set the headers for Server-Sent Events (SSE)
+    headers: {
+      "Content-Type": "text/event-stream; charset=utf-8",
+      Connection: "keep-alive",
+      "Cache-Control": "no-cache, no-transform",
+      "Content-Encoding": "none",
+    },
+  });
 }
-export { handler as GET, handler as POST };

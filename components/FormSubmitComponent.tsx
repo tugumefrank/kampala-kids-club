@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useRef, useState, useTransition } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { FormElementInstance, FormElements } from "./FormElements";
 import { Button } from "./ui/button";
 import { HiCursorClick } from "react-icons/hi";
@@ -11,6 +17,10 @@ import Link from "next/link";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import PaymentForm from "./shared/PaymentForm";
+import { useMobileContext } from "@/context/paymentContext";
+import { childPayment } from "@/lib/actions/eventPayment.action";
+import { json } from "stream/consumers";
 
 function FormSubmitComponent({
   formUrl,
@@ -21,39 +31,59 @@ function FormSubmitComponent({
   formUrl: string;
   formImageUrl: string;
 }) {
+  const {
+    pending,
+    startTransition,
+    submitted,
+    setSubmitted,
+
+    formErrors,
+    setFormErrors,
+    renderKey,
+    setRenderKey,
+    transactionType,
+    mobileNumber,
+    mobileNetwork,
+    setFormValues,
+
+    formValues,
+  } = useMobileContext();
   const router = useRouter();
-  const formValues = useRef<{ [key: string]: string }>({});
-  const formErrors = useRef<{ [key: string]: boolean }>({});
-  const [renderKey, setRenderKey] = useState(new Date().getTime());
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
 
-  const [submitted, setSubmitted] = useState(false);
-  const [pending, startTransition] = useTransition();
-
+  const closeDialog = () => {
+    // Close the dialog and reset the showDialog state
+    setShowPaymentDialog(false);
+  };
   const validateForm: () => boolean = useCallback(() => {
+    let errors: { [key: string]: boolean } = {};
+
     for (const field of content) {
-      const actualValue = formValues.current[field.id] || "";
+      const actualValue = formValues[field.id] || "";
       const valid = FormElements[field.type].validate(field, actualValue);
 
       if (!valid) {
-        formErrors.current[field.id] = true;
+        errors[field.id] = true;
       }
     }
 
-    if (Object.keys(formErrors.current).length > 0) {
-      return false;
-    }
+    setFormErrors(errors);
 
-    return true;
-  }, [content]);
+    return Object.keys(errors).length === 0;
+  }, [content, formValues, formErrors]);
 
-  const submitValue = useCallback((key: string, value: string) => {
-    formValues.current[key] = value;
-  }, []);
+  const submitValue = useCallback(
+    (key: string, value: string) => {
+      setFormValues((prevValues) => ({ ...prevValues, [key]: value }));
+    },
+    [validateForm, formValues, formErrors]
+  );
 
   const submitForm = async () => {
-    formErrors.current = {};
     const validForm = validateForm();
+
     if (!validForm) {
+      setShowPaymentDialog(false);
       setRenderKey(new Date().getTime());
       toast({
         title: "Error",
@@ -63,12 +93,22 @@ function FormSubmitComponent({
       return;
     }
 
+    setShowPaymentDialog(true);
+  };
+
+  const handlePaymentSuccess = async () => {
+    // Close the payment dialog
+    setShowPaymentDialog(false);
     try {
-      const jsonContent = JSON.stringify(formValues.current);
+      const jsonContent = JSON.stringify(formValues);
+      console.log(jsonContent);
+      console.log(JSON.parse(jsonContent));
       await SubmitForm(formUrl, jsonContent);
       setSubmitted(true);
+      setShowPaymentDialog(false);
+      // Reset form values after a successful submission
+      setFormValues({});
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error",
         description: "Something went wrong",
@@ -76,7 +116,6 @@ function FormSubmitComponent({
       });
     }
   };
-
   if (submitted) {
     return (
       <div className="flex justify-center w-full h-full items-center p-8">
@@ -139,15 +178,29 @@ function FormSubmitComponent({
               key={element.id}
               elementInstance={element}
               submitValue={submitValue}
-              isInvalid={formErrors.current[element.id]}
-              defaultValue={formValues.current[element.id]}
+              isInvalid={formErrors[element.id]}
+              defaultValue={formValues[element.id]}
             />
           );
         })}
+        <PaymentForm
+          showDialog={showPaymentDialog}
+          closeDialog={closeDialog}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
         <Button
           className="mt-8"
           onClick={() => {
-            startTransition(submitForm);
+            if (pending) {
+              toast({
+                title: "Please wait",
+                description:
+                  "Your previous submission is still being processed",
+                variant: "default",
+              });
+            } else {
+              startTransition(submitForm);
+            }
           }}
           disabled={pending}
         >

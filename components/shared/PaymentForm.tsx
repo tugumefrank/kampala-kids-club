@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useRef } from "react";
+import { useMutation } from "react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-
+import { useCallback } from "react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -25,13 +26,9 @@ import { Input } from "@/components/ui/input";
 import CustomModal from "@/components/shared/PaymentProcess";
 import { useMobileContext } from "@/context/paymentContext";
 import { childPayment } from "@/lib/actions/eventPayment.action";
+import { toast } from "../ui/use-toast";
 
-const PaymentForm = ({
-  FormSubmitstatus,
-  FormErrorStatus,
-  childName,
-  childDetails,
-}: any) => {
+const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
   const {
     transactionType,
     mobileNumber,
@@ -52,57 +49,57 @@ const PaymentForm = ({
     setIsPaymentFormOpen,
     paymentUrl,
     setPaymentUrl,
+    formErrors,
+    setFormErrors,
+    setFormValues,
+    formValues,
   } = useMobileContext();
 
-  const [data, setData] = useState("");
-  const router = useRouter();
+  const fetchEvents = () => {
+    const eventSource = new EventSource(
+      `${process.env.NODE_PUBLIC_SERVER_URL}events`
+    );
 
-  const fetchSseData = async () => {
-    try {
-      const response = await fetch("/api/sse");
-      const result = await response.text();
-      console.log("Data from the server:", result);
-      if (result === "/dashboard") {
-        setData(result);
+    eventSource.onmessage = (event) => {
+      // Log the event data to the console
+      const data = JSON.parse(event.data);
+      console.log(data);
+
+      if (data.paymentStatus === "success") {
         setIsModalOpen(false);
-        router.push(result);
+        toast({
+          title: "Success",
+          description: "Payment received",
+          variant: "default",
+          className: "bg-green-500",
+        });
+        onPaymentSuccess();
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    };
+
+    // As the component unmounts, close listener to SSE API
+    return () => {
+      eventSource.close();
+    };
   };
-
-  useEffect(() => {
-    // Initial fetch
-    fetchSseData();
-
-    // Polling interval (e.g., every 5 seconds)
-    const intervalId = setInterval(() => {
-      console.log("Fetching data...");
-      fetchSseData();
-    }, 1000);
-
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
+  // ...
 
   const onCheckout = async () => {
     const order = {
       transactionType,
       mobileNumber,
       mobileNetwork,
-      ...childDetails,
     };
-    console.log(childDetails);
+
     try {
       const response = await childPayment(order);
       console.log(response);
 
       if (response && response.status == "success") {
-        console.log("data received from api end point");
         setIsPaymentFormOpen(false);
         setPaymentUrl(response.meta.authorization.redirect);
         setIsModalOpen(true);
+        fetchEvents();
       } else if ((response.message = "internal server error")) {
         setStatus("backend service unavailable");
       }
@@ -111,7 +108,18 @@ const PaymentForm = ({
       // Handle the error as needed
     }
   };
-
+  const resetForm = useCallback(() => {
+    // Reset form values and errors
+    setFormValues({});
+    setFormErrors({});
+  }, [formValues, setFormErrors]);
+  const handlerOpenChange = () => {
+    closeDialog();
+    resetForm();
+    setFormErrors({});
+  };
+  console.log(showDialog);
+  console.log(formErrors);
   return (
     <>
       <CustomModal
@@ -119,13 +127,8 @@ const PaymentForm = ({
         onOpenChange={setIsModalOpen}
         paymentUrl={paymentUrl}
       />{" "}
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button type="submit" className="button col-span-2 w-full">
-            {FormSubmitstatus ? "Submitting..." : "Submit and Pay"}
-          </Button>
-        </DialogTrigger>
-        {shouldRenderForm && isPaymentFormOpen ? (
+      <Dialog open={showDialog} onOpenChange={handlerOpenChange}>
+        {isPaymentFormOpen ? (
           <DialogContent
             className={`sm:max-w-[100] bg-slate-200  ${dynamicClassNames}`}
             onInteractOutside={(e) => {
@@ -141,9 +144,7 @@ const PaymentForm = ({
             }}
           >
             <DialogHeader>
-              <DialogTitle className=" text-center">
-                Pay for {childName}
-              </DialogTitle>
+              <DialogTitle className=" text-center">Pay for</DialogTitle>
               <DialogDescription className=" text-center">
                 Pay With Mobile Money
               </DialogDescription>

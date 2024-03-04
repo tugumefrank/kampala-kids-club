@@ -9,6 +9,7 @@ import ThemeProvider from "@/components/layout/ThemeToggle/theme-provider";
 import DesignerContextProvider from "@/components/context/DesignerContext";
 import { MobileProvider } from "@/context/paymentContext";
 import NextTopLoader from "nextjs-toploader";
+import QueryProvider from "@/context/react-query";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -34,19 +35,22 @@ export default function RootLayout({
       <html lang="en">
         <body className={poppins.variable}>
           {/* <NextTopLoader /> */}
-          <DesignerContextProvider>
-            <MobileProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                {children}
-                <Toaster />
-              </ThemeProvider>
-            </MobileProvider>
-          </DesignerContextProvider>
+          <QueryProvider>
+            <DesignerContextProvider>
+              <MobileProvider>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  {children}
+                  <Toaster />
+                  <Toaster2 />
+                </ThemeProvider>
+              </MobileProvider>
+            </DesignerContextProvider>
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>
