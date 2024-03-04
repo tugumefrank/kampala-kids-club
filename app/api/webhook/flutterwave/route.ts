@@ -78,7 +78,7 @@ export async function POST(request: Request, response: Response) {
         console.log(Order);
         const newChildOrder = await createChildOrder(Order);
         if (newChildOrder) {
-          fetch(`${process.env.NODE_PUBLIC_SERVER_URL}message`, {
+          fetch(`${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}message`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

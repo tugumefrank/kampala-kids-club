@@ -57,7 +57,7 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
 
   const fetchEvents = () => {
     const eventSource = new EventSource(
-      `${process.env.NODE_PUBLIC_SERVER_URL}events`
+      `${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}events`
     );
 
     eventSource.onmessage = (event) => {
