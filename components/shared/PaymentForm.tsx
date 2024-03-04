@@ -93,7 +93,7 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
         `${
           process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL?.replace(
             "http",
-            "ws"
+            "wss"
           ) ?? ""
         }`
       );
