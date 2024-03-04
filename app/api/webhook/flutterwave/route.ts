@@ -4,10 +4,7 @@ import { createChild } from "@/lib/actions/register.actions";
 import { sendTwilioMessage } from "@/lib/twilioHandler";
 
 import { createChildOrder } from "@/lib/actions/ChildOrder.actions";
-import { app } from "@/lib/application";
-export const state = {
-  messages: [] as string[],
-};
+
 export async function POST(request: Request, response: Response) {
   const flutterwaveSecretKey = process.env.FLW_SECRET_KEY;
   const body = await request.text();
