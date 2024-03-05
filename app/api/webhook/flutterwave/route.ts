@@ -49,7 +49,7 @@ export async function POST(request: Request, response: Response) {
       const transactionDetails = await transactionData.json();
 
       console.log(transactionDetails);
-      const { eventId, childName } = transactionDetails.data.meta;
+      const { eventId, transactionType } = transactionDetails.data.meta;
       if (eventId) {
         // checks if the webhook has an eventID to create order for event
         const order = {
@@ -63,7 +63,7 @@ export async function POST(request: Request, response: Response) {
         const newOrder = await createOrder(order);
 
         return NextResponse.json({ message: "OK", order: newOrder });
-      } else if (childName) {
+      } else if (transactionType) {
         // create ChildOrder in the database
         const Order = {
           paymentStatus: transactionDetails.status,
