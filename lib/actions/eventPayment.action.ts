@@ -39,7 +39,7 @@ export async function childPayment(order: {
       currency: string;
       email: string;
       tx_ref: string;
-      meta: ChildPaymentDetails;
+      meta: String;
       redirect_url: string;
     } = {
       phone_number: order.mobileNumber,
@@ -48,7 +48,7 @@ export async function childPayment(order: {
       currency: "UGX",
       email: "frankholmez@gmail.com", // Replace with the appropriate email address
       tx_ref: tx_ref,
-      meta: order.childDetails,
+      meta: order.transactionType,
       redirect_url: `${process.env.PUBLIC_SERVER_URL}/profile`,
     };
 
