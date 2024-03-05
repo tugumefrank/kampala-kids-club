@@ -48,8 +48,9 @@ export async function POST(request: Request, response: Response) {
     if (transactionData.ok) {
       const transactionDetails = await transactionData.json();
 
-      console.log(transactionDetails);
+      console.log("these are the transaction details", transactionDetails);
       const { eventId, transactionType } = transactionDetails.data.meta;
+      console.log("this is the transaction type", transactionType);
       if (eventId) {
         // checks if the webhook has an eventID to create order for event
         const order = {

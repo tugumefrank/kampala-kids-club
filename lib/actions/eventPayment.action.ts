@@ -13,7 +13,11 @@ interface FlutterwaveResponse {
   // status: string;
   // // ... other properties
 }
+interface Meta {
+  transactionType: string;
 
+  // add more properties as needed
+}
 export async function childPayment(order: {
   mobileNumber: string;
   mobileNetwork: string;
@@ -39,7 +43,7 @@ export async function childPayment(order: {
       currency: string;
       email: string;
       tx_ref: string;
-      meta: String;
+      meta: Meta;
       redirect_url: string;
     } = {
       phone_number: order.mobileNumber,
@@ -48,7 +52,7 @@ export async function childPayment(order: {
       currency: "UGX",
       email: "frankholmez@gmail.com", // Replace with the appropriate email address
       tx_ref: tx_ref,
-      meta: order.transactionType,
+      meta: { transactionType: order.transactionType }, // Provide an initializer for the shorthand property 'transactionType'
       redirect_url: `${process.env.PUBLIC_SERVER_URL}/profile`,
     };
 
