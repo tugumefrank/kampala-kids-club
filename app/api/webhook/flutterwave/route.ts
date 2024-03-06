@@ -79,6 +79,7 @@ export async function POST(request: Request, response: Response) {
         console.log(Order);
         const newChildOrder = await createChildOrder(Order);
         if (newChildOrder) {
+          console.log(newChildOrder);
           fetch(`${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}message`, {
             // Replace with your server URL
             method: "POST",
