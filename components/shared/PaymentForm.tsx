@@ -77,18 +77,13 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
         });
       }
     };
-    return eventSource;
+
     // As the component unmounts, close listener to SSE API
-    // return () => {
-    //   eventSource.close();
-    // };
-  };
-  useEffect(() => {
-    const eventSource = fetchEvents();
     return () => {
       eventSource.close();
     };
-  }, []);
+  };
+
   const onCheckout = async () => {
     const order = {
       transactionType,
@@ -104,7 +99,7 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
         setIsPaymentFormOpen(false);
         setPaymentUrl(response.meta.authorization.redirect);
         setIsModalOpen(true);
-        // fetchEvents();
+        fetchEvents();
       } else if ((response.message = "internal server error")) {
         setStatus("backend service unavailable");
       }
