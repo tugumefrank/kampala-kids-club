@@ -50,6 +50,7 @@ export const createEventOrder = async (order: EventOrderParams) => {
 };
 
 // GET ORDERS BY EVENT
+
 export async function getOrdersByEvent({
   searchString,
   eventId,
@@ -58,49 +59,24 @@ export async function getOrdersByEvent({
     await connectToDatabase();
 
     if (!eventId) throw new Error("Event ID is required");
-    const eventObjectId = new ObjectId(eventId);
 
     const orders = await EventOrders.aggregate([
       {
-        $lookup: {
-          from: "users",
-          localField: "buyer",
-          foreignField: "_id",
-          as: "buyer",
+        $match: {
+          eventId: eventId,
+          buyerNumber: { $regex: RegExp(searchString, "i") },
         },
-      },
-      {
-        $unwind: "$buyer",
-      },
-      {
-        $lookup: {
-          from: "events",
-          localField: "event",
-          foreignField: "_id",
-          as: "event",
-        },
-      },
-      {
-        $unwind: "$event",
       },
       {
         $project: {
           _id: 1,
           totalAmount: 1,
           createdAt: 1,
-          eventTitle: "$event.title",
-          eventId: "$event._id",
-          buyer: {
-            $concat: ["$buyer.firstName", " ", "$buyer.lastName"],
-          },
-        },
-      },
-      {
-        $match: {
-          $and: [
-            { eventId: eventObjectId },
-            { buyer: { $regex: RegExp(searchString, "i") } },
-          ],
+          transactionId: 1,
+          paymentStatus: 1,
+          eventId: 1,
+          buyerNumber: 1,
+          transactionType: 1,
         },
       },
     ]);
@@ -111,6 +87,67 @@ export async function getOrdersByEvent({
     handleError(error);
   }
 }
+// export async function getOrdersByEvent({
+//   searchString,
+//   eventId,
+// }: GetOrdersByEventParams) {
+//   try {
+//     await connectToDatabase();
+
+//     if (!eventId) throw new Error("Event ID is required");
+//     const eventObjectId = new ObjectId(eventId);
+
+//     const orders = await EventOrders.aggregate([
+//       {
+//         $lookup: {
+//           from: "users",
+//           localField: "buyer",
+//           foreignField: "_id",
+//           as: "buyer",
+//         },
+//       },
+//       {
+//         $unwind: "$buyer",
+//       },
+//       {
+//         $lookup: {
+//           from: "events",
+//           localField: "event",
+//           foreignField: "_id",
+//           as: "event",
+//         },
+//       },
+//       {
+//         $unwind: "$event",
+//       },
+//       {
+//         $project: {
+//           _id: 1,
+//           totalAmount: 1,
+//           createdAt: 1,
+//           eventTitle: "$event.title",
+//           eventId: "$event._id",
+//           buyer: {
+//             $concat: ["$buyer.firstName", " ", "$buyer.lastName"],
+//           },
+//         },
+//       },
+//       {
+//         $match: {
+//           $and: [
+//             { eventId: eventObjectId },
+//             { buyer: { $regex: RegExp(searchString, "i") } },
+//           ],
+//         },
+//       },
+//     ]);
+
+//     return JSON.parse(JSON.stringify(orders));
+//   } catch (error) {
+//     console.log(error);
+//     handleError(error);
+//   }
+// }
 
 // GET ORDERS BY USER
 export async function getOrdersByUser({
