@@ -6,9 +6,11 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import Checkout from "./Checkout";
+import UnifiedCheckoutForm from "./UnifiedCheckoutForm";
 
 const CheckoutButton = ({ event }: { event: IEvent }) => {
   const { user } = useUser();
+  console.log(event);
   console.log(user);
   const userId = user?.publicMetadata.userId as string;
   const email = user?.primaryEmailAddress?.emailAddress as string;
@@ -30,7 +32,7 @@ const CheckoutButton = ({ event }: { event: IEvent }) => {
           </SignedOut>
 
           <SignedIn>
-            <Checkout
+            <UnifiedCheckoutForm
               event={event}
               userId={userId}
               email={email}

@@ -17,10 +17,11 @@ import Link from "next/link";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import PaymentForm from "./shared/PaymentForm";
+import PaymentForm from "./shared/OnFormsCheckout";
 import { useMobileContext } from "@/context/paymentContext";
-import { childPayment } from "@/lib/actions/eventPayment.action";
+
 import { json } from "stream/consumers";
+import UnifiedCheckoutForm from "./shared/UnifiedCheckoutForm";
 
 function FormSubmitComponent({
   formUrl,
@@ -183,7 +184,7 @@ function FormSubmitComponent({
             />
           );
         })}
-        <PaymentForm
+        <UnifiedCheckoutForm
           showDialog={showPaymentDialog}
           closeDialog={closeDialog}
           onPaymentSuccess={handlePaymentSuccess}

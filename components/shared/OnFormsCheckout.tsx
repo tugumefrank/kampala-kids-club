@@ -1,6 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useMutation } from "react-query";
-import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useCallback } from "react";
 import {
@@ -25,10 +22,14 @@ import {
 import { Input } from "@/components/ui/input";
 import CustomModal from "@/components/shared/PaymentProcess";
 import { useMobileContext } from "@/context/paymentContext";
-import { childPayment } from "@/lib/actions/eventPayment.action";
+import { FormPaymentAction } from "@/lib/actions/Payment.action";
 import { toast } from "../ui/use-toast";
 
-const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
+const OnFormsCheckout = ({
+  showDialog,
+  closeDialog,
+  onPaymentSuccess,
+}: any) => {
   const {
     transactionType,
     mobileNumber,
@@ -92,7 +93,7 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
     };
 
     try {
-      const response = await childPayment(order);
+      const response = await FormPaymentAction(order);
       console.log(response);
 
       if (response && response.status == "success") {
@@ -187,11 +188,11 @@ const PaymentForm = ({ showDialog, closeDialog, onPaymentSuccess }: any) => {
             </DialogFooter>
           </DialogContent>
         ) : (
-          "some fields missing"
+          ""
         )}
       </Dialog>
     </>
   );
 };
 
-export default PaymentForm;
+export default OnFormsCheckout;

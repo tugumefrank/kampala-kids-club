@@ -18,7 +18,7 @@ interface Meta {
 
   // add more properties as needed
 }
-export async function childPayment(order: {
+export async function FormPaymentAction(order: {
   mobileNumber: string;
   mobileNetwork: string;
   transactionType: string; // Add transactionType to the interface
@@ -82,4 +82,76 @@ function generateRandomString(length: number): string {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return result;
+}
+
+export async function EventPaymentAction(order: {
+  eventTitle: string;
+  eventId: string;
+  price: string;
+  isFree: boolean;
+  buyerId: string;
+  mobileNumber: string;
+  mobileNetwork: string;
+  email: string;
+  transactionType: string;
+}): Promise<any> {
+  const url = "https://api.flutterwave.com/v3/charges?type=mobile_money_uganda";
+  const token = process.env.FLW_SECRET_KEY;
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const tx_ref = generateRandomString(10);
+
+    const payload: {
+      phone_number: string;
+      network: string;
+      amount: number;
+      currency: string;
+      email: string;
+      tx_ref: string;
+      meta: Meta & {
+        eventTitle: string;
+        eventId: string;
+        price: string;
+        isFree: boolean;
+        buyerId: string;
+      };
+      redirect_url: string;
+    } = {
+      phone_number: order.mobileNumber,
+      network: order.mobileNetwork,
+      amount: 500,
+      currency: "UGX",
+      email: order.email || "frankholmez@gmail.com",
+      tx_ref: tx_ref,
+      meta: {
+        transactionType: order.transactionType,
+        eventTitle: order.eventTitle,
+        eventId: order.eventId,
+        price: order.price,
+        isFree: order.isFree,
+        buyerId: order.buyerId,
+      },
+      redirect_url: `${process.env.PUBLIC_SERVER_URL}/profile`,
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(payload),
+    });
+
+    const flutterwaveResponse = await response.json();
+
+    console.log("Response:", flutterwaveResponse);
+
+    return flutterwaveResponse;
+  } catch (error) {
+    console.error("Error:", error);
+    throw new Error("Error in payment processing");
+  }
 }

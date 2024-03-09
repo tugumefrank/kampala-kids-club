@@ -10,7 +10,7 @@ import {
 } from "react";
 
 type MobileContextType = {
-  transactionType: string;
+  transactionType: "FormPayment" | "EventPayment"; // Updated type
   mobileNumber: string;
   mobileNetwork: string;
   setMobileNumber: React.Dispatch<React.SetStateAction<string>>;
@@ -46,6 +46,9 @@ type MobileContextType = {
   >;
   renderKey: number;
   setRenderKey: React.Dispatch<React.SetStateAction<number>>;
+  setTransactionType: React.Dispatch<
+    React.SetStateAction<"FormPayment" | "EventPayment">
+  >; // Added setter
 };
 const MobileContext = createContext<MobileContextType | undefined>(undefined);
 
@@ -63,7 +66,9 @@ export const MobileProvider: React.FC<{ children: ReactNode }> = ({
   const [paymentUrl, setPaymentUrl] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [pending, startTransition] = useTransition();
-  const transactionType = "FormPayment";
+  const [transactionType, setTransactionType] = useState<
+    "FormPayment" | "EventPayment"
+  >("FormPayment"); // Updated type
   // const formValues = useRef<{ [key: string]: string }>({});
   // const formErrors = useRef<{ [key: string]: boolean }>({});
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({});
@@ -84,6 +89,7 @@ export const MobileProvider: React.FC<{ children: ReactNode }> = ({
         submitted,
         setSubmitted,
         transactionType,
+        setTransactionType,
         mobileNumber,
         mobileNetwork,
         setMobileNumber,

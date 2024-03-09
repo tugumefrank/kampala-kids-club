@@ -1,5 +1,5 @@
 import Collection from "@/components/shared/Collection";
-import Ticket from "@/components/shared/Ticket";
+import Ticket from "@/components/Ticket/Ticket";
 import { Button } from "@/components/ui/button";
 import { getEventsByUser } from "@/lib/actions/event.actions";
 import { getOrdersByUser } from "@/lib/actions/order.actions";

@@ -42,7 +42,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
         onCloseAutoFocus={(e) => {
           e.preventDefault();
           console.log("clicked close button");
-          setIsPaymentFormOpen(true);
+          // setIsPaymentFormOpen(true);
         }}
       >
         <iframe title="Payment" src={paymentUrl} width="100%" height="400px" />

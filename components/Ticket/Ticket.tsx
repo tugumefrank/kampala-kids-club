@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import { IEvent } from "@/lib/database/models/event.model";
-import TicketBarcode from "./TicketBarcode";
+import TicketBarcode from "@/components/Ticket/TicketBarcode";
 import TicketHeroSection from "./TicketHeroSection";
-import Pagination from "./Pagination";
+import Pagination from "../shared/Pagination";
 
 type CollectionProps = {
   data: IEvent[];

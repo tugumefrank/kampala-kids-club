@@ -63,14 +63,15 @@ const Checkout = ({
 
   const onCheckout = async () => {
     const order = {
-      eventTitle: event.title,
-      eventId: event._id,
-      price: event.price,
-      isFree: event.isFree,
+      eventTitle: event?.title,
+      eventId: event?._id,
+      price: event?.price,
+      isFree: event?.isFree,
       buyerId: userId,
       mobileNumber,
       mobileNetwork,
       email,
+      transactionType,
     };
     try {
       const response = await checkoutOrder(order);
@@ -109,51 +110,7 @@ const Checkout = ({
             {event.isFree ? "Get Ticket" : "Buy Ticket"}
           </Button>
         </DialogTrigger>
-        {/* <DialogContent className="sm:max-w-[425px] bg-green-200">
-          <DialogHeader>
-            <DialogTitle className=" text-center">
-              Get ticket for {event.title}
-            </DialogTitle>
-            <DialogDescription className=" text-center">
-              Pay With Mobile Money
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="flex flex-col gap-5 md:flex-row">
-              <Input
-                id="name"
-                placeholder="Enter Mobile Number"
-                className="input-field  w-full"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-              />{" "}
-            </div>
-            <div className="flex flex-col gap-5 md:flex-row">
-              <Select value={mobileNetwork} onValueChange={setMobileNetwork}>
-                <SelectTrigger className="w-full input-field">
-                  <SelectValue placeholder="Choose mobile network " />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Companys</SelectLabel>
-                    <SelectItem value="AIRTEL">AIRTEL</SelectItem>
-                    <SelectItem value="MTN">MTN</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          <DialogFooter>
-            <Button
-              type="submit"
-              className="button sm:w-fit"
-              onClick={onCheckout}
-            >
-              Pay Now
-            </Button>
-          </DialogFooter>
-        </DialogContent> */}
         {shouldRenderForm && isPaymentFormOpen ? (
           <DialogContent
             className={`sm:max-w-[100] bg-slate-200  ${dynamicClassNames}`}

@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { createChild, ChildPayment } from "@/lib/actions/register.actions";
 
 import toast, { Toaster } from "react-hot-toast";
-import PaymentForm from "@/components/shared/PaymentForm";
+import PaymentForm from "@/components/shared/OnFormsCheckout";
 
 type ChildFormProps = {
   // Your prop types here

@@ -1,5 +1,5 @@
 import React from "react";
-import BarCodeGenerator from "./BarCodeGenerator";
+import BarCodeGenerator from "../shared/BarCodeGenerator";
 import { getOrdersByEvent } from "@/lib/actions/order.actions";
 import { IEvent } from "@/lib/database/models/event.model";
 type CardProps = {
