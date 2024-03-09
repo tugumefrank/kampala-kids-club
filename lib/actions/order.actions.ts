@@ -2,14 +2,14 @@
 
 import {
   CheckoutOrderParams,
-  CreateOrderParams,
+  EventOrderParams,
   GetOrdersByEventParams,
   GetOrdersByUserParams,
 } from "@/types";
 
 import { handleError } from "../utils";
 import { connectToDatabase } from "../database";
-import Order from "../database/models/order.model";
+import EventOrders from "../database/models/order.model";
 import Event from "../database/models/event.model";
 import { ObjectId } from "mongodb";
 import User from "../database/models/user.model";
@@ -34,14 +34,13 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
   }
 };
 
-export const createOrder = async (order: CreateOrderParams) => {
+export const createEventOrder = async (order: EventOrderParams) => {
   try {
     await connectToDatabase();
 
-    const newOrder = await Order.create({
+    const newOrder = await EventOrders.create({
       ...order,
       event: order.eventId,
-      buyer: order.buyerId,
     });
 
     return JSON.parse(JSON.stringify(newOrder));
@@ -61,7 +60,7 @@ export async function getOrdersByEvent({
     if (!eventId) throw new Error("Event ID is required");
     const eventObjectId = new ObjectId(eventId);
 
-    const orders = await Order.aggregate([
+    const orders = await EventOrders.aggregate([
       {
         $lookup: {
           from: "users",
@@ -125,7 +124,7 @@ export async function getOrdersByUser({
     const skipAmount = (Number(page) - 1) * limit;
     const conditions = { buyer: userId };
 
-    const orders = await Order.distinct("event._id")
+    const orders = await EventOrders.distinct("event._id")
       .find(conditions)
       .sort({ createdAt: "desc" })
       .skip(skipAmount)
@@ -140,7 +139,7 @@ export async function getOrdersByUser({
         },
       });
 
-    const ordersCount = await Order.distinct("event._id").countDocuments(
+    const ordersCount = await EventOrders.distinct("event._id").countDocuments(
       conditions
     );
 

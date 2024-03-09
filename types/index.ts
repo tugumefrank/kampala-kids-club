@@ -118,12 +118,14 @@ export type CheckoutOrderParams = {
   transactionType: string;
 };
 
-export type CreateOrderParams = {
-  stripeId: string;
+export type EventOrderParams = {
+  transactionId: string;
+  paymentStatus: string;
   eventId: string;
-  buyerId: string;
+  buyerNumber: string;
   totalAmount: string;
   createdAt: Date;
+  transactionType: string;
 };
 
 export type GetOrdersByEventParams = {

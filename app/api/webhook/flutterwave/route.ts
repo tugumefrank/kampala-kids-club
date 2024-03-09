@@ -1,9 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
-import { createOrder } from "@/lib/actions/order.actions";
+import { createEventOrder } from "@/lib/actions/order.actions";
 import { createChild } from "@/lib/actions/register.actions";
 import { sendTwilioMessage } from "@/lib/twilioHandler";
 
 import { createChildOrder } from "@/lib/actions/ChildOrder.actions";
+import { EventOrderParams } from "@/types"; // Import the type definition for EventOrderParams
 
 export async function POST(request: Request, response: Response) {
   const flutterwaveSecretKey = process.env.FLW_SECRET_KEY;
@@ -49,22 +50,41 @@ export async function POST(request: Request, response: Response) {
       const transactionDetails = await transactionData.json();
 
       console.log("these are the transaction details", transactionDetails);
-      const { eventId, transactionType } = transactionDetails.data.meta;
+      const { transactionType } = transactionDetails.data.meta;
       console.log("this is the transaction type", transactionType);
-      if (eventId) {
+      if (transactionType === "EventPayment") {
+        console.log("this is the event payment");
         // checks if the webhook has an eventID to create order for event
-        const order = {
-          stripeId: transactionDetails.data.flw_ref,
-          eventId: eventId,
-          buyerId: transactionDetails.data.meta.buyerId,
+        const order: EventOrderParams = {
+          paymentStatus: transactionDetails.status,
+          transactionType: transactionDetails.data.meta.transactionType,
+          transactionId: transactionDetails.data.flw_ref,
+          eventId: transactionDetails.data.meta.eventId,
+          buyerNumber: transactionDetails.data.customer.phone_number,
           totalAmount: amount ? amount.toString() : "0",
           createdAt: new Date(),
         };
 
-        const newOrder = await createOrder(order);
-
-        return NextResponse.json({ message: "OK", order: newOrder });
-      } else if (transactionType) {
+        const newEventOrder = await createEventOrder(order);
+        console.log(newEventOrder);
+        if (newEventOrder) {
+          console.log(newEventOrder);
+          fetch(`${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}message`, {
+            // Replace with your server URL
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message: newEventOrder }),
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+        return NextResponse.json({ message: "OK", order: newEventOrder });
+      } else if (transactionType === "FormPayment") {
         // create ChildOrder in the database
         const Order = {
           paymentStatus: transactionDetails.status,
