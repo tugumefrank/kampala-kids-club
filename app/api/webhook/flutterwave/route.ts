@@ -74,7 +74,12 @@ export async function POST(request: Request, response: Response) {
             },
             body: JSON.stringify({ message: newEventOrder }),
           })
-            .then((response) => response.json())
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
             .then((data) => console.log(data))
             .catch((error) => {
               console.error("Error:", error);
