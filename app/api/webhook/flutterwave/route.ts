@@ -20,17 +20,17 @@ export async function POST(request: Request, response: Response) {
   let flutterWebhookResponse;
   try {
     flutterWebhookResponse = JSON.parse(body);
-    console.log(flutterWebhookResponse);
+    console.log({ "flutter webhook response": flutterWebhookResponse });
   } catch (err) {
     return NextResponse.json({ message: "Webhook error", error: err });
   }
 
   const eventStatus = flutterWebhookResponse.data.status;
-  console.log(eventStatus);
+
   // Check if the event is successful
   if (eventStatus === "successful") {
     const { id, amount, tx_ref } = flutterWebhookResponse.data;
-    console.log(tx_ref);
+
     // Make a GET request to Flutterwave API
     // const txRef = metadata?.txRef || ""; // Replace with the actual key you expect in metadata
     const transactionData = await fetch(
@@ -49,11 +49,9 @@ export async function POST(request: Request, response: Response) {
     if (transactionData.ok) {
       const transactionDetails = await transactionData.json();
 
-      console.log("these are the transaction details", transactionDetails);
       const { transactionType } = transactionDetails.data.meta;
-      console.log("this is the transaction type", transactionType);
+
       if (transactionType === "EventPayment") {
-        console.log("this is the event payment");
         // checks if the webhook has an eventID to create order for event
         const order: EventOrderParams = {
           paymentStatus: transactionDetails.status,
@@ -66,9 +64,8 @@ export async function POST(request: Request, response: Response) {
         };
 
         const newEventOrder = await createEventOrder(order);
-        console.log(newEventOrder);
+        console.log({ "new eventorder ": newEventOrder });
         if (newEventOrder) {
-          console.log(newEventOrder);
           fetch(`${process.env.NEXT_PUBLIC_NODE_PUBLIC_SERVER_URL}message`, {
             // Replace with your server URL
             method: "POST",
@@ -83,7 +80,7 @@ export async function POST(request: Request, response: Response) {
               console.error("Error:", error);
             });
         }
-        return NextResponse.json({ message: "OK", order: newEventOrder });
+        return NextResponse.json({ message: newEventOrder });
       } else if (transactionType === "FormPayment") {
         // create ChildOrder in the database
         const Order = {
@@ -135,7 +132,7 @@ export async function POST(request: Request, response: Response) {
           });
         }
 
-        return NextResponse.json({ message: "OK", order: newChildOrder });
+        return NextResponse.json({ message: newChildOrder });
       }
     } else {
       console.error(
