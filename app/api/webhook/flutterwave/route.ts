@@ -78,12 +78,19 @@ export async function POST(request: Request, response: Response) {
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
-              return response.json();
+              // Check if the response is valid JSON
+              const contentType = response.headers.get("content-type");
+              if (
+                contentType &&
+                contentType.indexOf("application/json") !== -1
+              ) {
+                return response.json();
+              } else {
+                throw new Error("Oops, we haven't got JSON!");
+              }
             })
             .then((data) => console.log(data))
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+            .catch((error) => console.error(error));
         }
         return NextResponse.json({ message: newEventOrder });
       } else if (transactionType === "FormPayment") {
